@@ -1,0 +1,274 @@
+package org.swissbib.extern.xSwissBib.librarysystems.aleph;
+      
+
+import org.apache.log4j.Logger;
+import org.swissbib.extern.xSwissBib.librarysystems.LibrarySystem;
+import org.swissbib.extern.xSwissBib.librarysystems.aleph.filter.AvailabilityFilter;
+import org.swissbib.extern.xSwissBib.librarysystems.aleph.filter.AlephErrorStreamFilter;
+import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateResponse;
+import org.swissbib.extern.xSwissBib.services.common.XServiceUtilities;
+import org.swissbib.extern.xSwissBib.services.common.XServiceException;
+import org.swissbib.utilities.web.HTTPConnectionHandling;
+
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
+
+import javax.xml.stream.XMLStreamConstants;
+
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.util.Scanner;
+
+/**
+ * Created by Project SwissBib, www.swissbib.org. 
+ * Author: Günter Hipler
+ * Date: 13.07.2009
+ * Time: 15:51:33
+ *
+ */
+public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConstants{
+
+
+    private final static String X_SERVER_CODE = "/X?";
+    private final static String OP_PARAMETER = "op=";
+    private final static String HTTP_GET_DELIMITER = "&";
+
+    private final static String OP_CODE_GET_INTERNAL_ID = "bor-by-key";
+    private final static String OP_CODE_PUBLISH_AVAIL = "publish_avail";
+    private final static String OP_CODE_CIRC_STATUS = "circ-status";
+
+    private final static String OAI_OAI_PMH = "OAI-PMH";
+    private final static String OAI_SESSION_ID = "session-id";
+    private final static String OAI_ListRecords = "ListRecords";
+    private final static String OAI_HEADER = "header";
+    private final static String OAI_RECORD = "record";
+    private final static String OAI_METADATA = "metadata";
+    private final static String OAI_IDENTIFIER = "identifier";
+
+
+    private final static String MARCXML_DATAFIELD = "datafield";
+    private final static String MARCXML_ATTR_TAG = "tag";
+    private final static String MARCXML_ATTR_TAG_AVA = "AVA";
+    private final static String MARCXML_SUBFIELD = "subfield";
+    private final static String MARCXML_SUBFIELD_CODE_AVA = "e";
+    private final static String MARCXML_SUBFIELD_CODE = "code";
+
+
+    private final static String MARCXML_AVAILABLE_VALUE = "available";
+    private final static String MARCXML_AVAILABLE_ERROR = "error";
+    private final static String MARCXML_AVAILABLE_ERROR_MESSAGE = "error_message";
+
+
+    private final static String XSERVER_LOGIN_ERROR = "login";
+    private final static String XSERVER_LOGIN_APACHE_ERROR = "html";
+    private final static String XSERVER_CIRCSTATUS_ERROR_ROOT = "circ-status";
+    private final static String XSERVER_CIRCSTATUS_ERROR_FIELD = "error";
+    private final static String XSERVER_LOGIN_ERROR_ERRORFIELD = "error";
+
+
+    private final static Logger availLog = Logger.getLogger("swissbibavail");
+
+
+
+
+
+    public CirculationStateResponse requestCircultation() throws XServiceException {
+
+        CirculationStateResponse response = null;
+        String xServerResponse = null;
+
+        String alephXRequest = getLibraryProperties().getUrlsystem() +
+            String.format(getLibraryProperties().getCircQueryParameter(),XServiceUtilities.getStringArrayAsString(getDocItems()))
+                + getLibraryProperties().getAnonymusUser();
+
+
+        try {
+
+            xServerResponse = this.doAlephXRequest(alephXRequest);
+
+
+            //ToDo better check of response using this op-code -> it seems Aleph knows a lot of errors...
+
+            this.requestURL = alephXRequest;
+            //this.checkResponseFromSystem(xServerResponse);
+
+            response = this.parseGetCircStatusStax(xServerResponse);
+            response.setRequestedURL(alephXRequest);
+
+
+        }
+        catch (XMLStreamException stE){
+
+            availLog.warn("XMLStreamException while accessing remote library system: ", stE);
+            throw new XServiceException("XMLStreamException while accessing remote library system: " + stE.getMessage());
+        }
+        catch (IOException ioE) {
+            availLog.warn("IOException while accessing remote library system: ", ioE);
+            throw new XServiceException("IOException while accessing remote library system: " + ioE.getMessage());
+        } catch (Throwable thE) {
+
+            availLog.warn("Throwable Exception while accessing remote library system: ", thE);
+            throw new XServiceException("Throwable Exception while accessing remote library system: " + thE.getMessage());
+        }
+
+        response.formatItemsResponse(this.getInstitution(),this.getLanguage());
+
+
+        return response;
+    }
+
+    public void checkResponseFromSystem(String xServerResponse) throws XServiceException {
+
+
+
+        try {
+
+            ByteArrayInputStream bAxServerResponse = new ByteArrayInputStream(xServerResponse.getBytes("UTF-8"));
+            final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+
+            AlephErrorStreamFilter aFilter = new AlephErrorStreamFilter(this.getDocItems()[0]);
+
+            XMLStreamReader p = inputFactory.createFilteredReader(inputFactory.createXMLStreamReader
+                    (new StreamSource(bAxServerResponse)),aFilter) ;
+
+
+            while(p.hasNext() )
+            {   try {
+                    p.next();
+
+                } catch (Exception ex){
+                    availLog.info("AlephLibrarySystem.checkResponseFromSystem: Exception error: ", ex);
+                } catch (Throwable thEx) {
+                    availLog.info("AlephLibrarySystem.checkResponseFromSystem: Throwable error: ", thEx);
+                }
+            }
+
+
+
+        } catch (UnsupportedEncodingException useE){
+
+            StringBuilder sB  = new StringBuilder();
+
+            for (StackTraceElement sE : useE.getStackTrace() ) {
+
+                sB.append(sE.getMethodName()).append("\n");
+                sB.append(sE.getClassName()).append("\n");
+                sB.append(sE.getFileName()).append("\n");
+                sB.append(sE.getLineNumber()).append("\n");
+            }
+
+            throw new XServiceException(sB.toString());
+        } catch (XMLStreamException xmlSE){
+
+            StringBuilder sB  = new StringBuilder();
+
+            for (StackTraceElement sE : xmlSE.getStackTrace() ) {
+
+                sB.append(sE.getMethodName()).append("\n");
+                sB.append(sE.getClassName()).append("\n");
+                sB.append(sE.getFileName()).append("\n");
+                sB.append(sE.getLineNumber()).append("\n");
+            }
+
+            throw new XServiceException(sB.toString());
+        }
+
+
+    }
+
+    private String doAlephXRequest(String requestedURL) throws IOException {
+        String response = "";
+        this.requestURL = requestURL;
+
+
+        availLog.info("URL library system: " + requestedURL);
+
+        HTTPConnectionHandling connectionHandling = null;
+
+        if (null != this.getProxyServer() && this.getProxyServer().length() > 0) {
+            availLog.debug("general proxy is defined in web.xml: " + this.getProxyServer());
+            connectionHandling = new HTTPConnectionHandling(this.getProxyServer());
+        } else {
+            availLog.debug("no general proxy in web.xml defined");
+            connectionHandling = new HTTPConnectionHandling();
+        }
+
+
+
+        availLog.debug("proxy definition for individual system: " + this.getLibraryProperties().isUseProxy() + " -> both must be true to use proxy server");
+
+        HttpURLConnection connection = connectionHandling.getHTTPConnection(requestedURL,
+                                                                            this.getLibraryProperties().isUseProxy());
+
+
+        InputStream is = (InputStream) connection.getContent();
+
+
+
+        response = new Scanner( is ).useDelimiter( "\\Z" ).next();
+
+        availLog.debug("\nresponse from system");
+        availLog.debug(response);
+
+        if ( is != null )
+            is.close();
+        return response;
+    }
+
+
+
+
+
+
+
+
+
+
+    private CirculationStateResponse parseGetCircStatusStax(String xServerResponse) throws UnsupportedEncodingException,
+                                                                                            XMLStreamException
+                                                                                                        {
+
+
+        ByteArrayInputStream bAxServerResponse = new ByteArrayInputStream(xServerResponse.getBytes("UTF-8"));
+        final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+
+        AvailabilityFilter aFilter = new AvailabilityFilter(this.getDocItems()[0],this.getBarcode(),this.getInstitution() );
+        
+        XMLStreamReader p = inputFactory.createFilteredReader(inputFactory.createXMLStreamReader
+                (new StreamSource(bAxServerResponse)),aFilter) ;
+        //p.require(START_ELEMENT, null, "bla");
+
+
+        while(p.hasNext() )
+        {   try {
+                p.next();
+            } catch (Exception ex){
+                availLog.info("AlephLibrarySystem.parseGetCircStatusStax: Exception error: ", ex);
+                p.next();
+            } catch (Throwable thEx) {
+                availLog.info("AlephLibrarySystem.parseGetCircStatusStax: Throwable error: ", thEx);
+                p.next();
+            }
+        }
+
+
+
+        return aFilter.getCircStateResonse();
+
+    }
+
+
+    private String doAlephTestrequest() {
+        String[] barcodes = {"DSVN1043418","0UBU0152192"};
+        this.setBarcode(barcodes);
+        return "<circ-status> <item-data><z30-description/><loan-status>Consult LibInfo</loan-status><due-date/><due-hour/><sub-library>Bern UB Romanistik</sub-library><collection>Romanische Philologie Freihandbereich</collection><location>RO II J 580</location><pages/><no-requests/><location-2/><barcode>DSVN1043418</barcode><opac-note/></item-data><item-data><z30-description/><loan-status>Loan</loan-status><due-date/><due-hour/><sub-library>Bern UB ZB</sub-library><collection>Magazin (U1)</collection><location>ZB Rom var 339</location><pages/><no-requests/><location-2/><barcode>000846409</barcode><opac-note/></item-data><item-data><z30-description/><loan-status>Loan</loan-status><due-date/><due-hour/><sub-library>Basel Frz. Sprach- &amp; Lit-Wiss.</sub-library><collection>Freihandbereich</collection><location>FRA 1 Fla 40.334</location><pages/><no-requests/><location-2/><barcode>DSVN3363045</barcode><opac-note/></item-data><item-data><z30-description/><loan-status>Loan</loan-status><due-date/><due-hour/><sub-library>Basel UB</sub-library><collection>Magazin</collection><location>Aoo 3253</location><pages/><no-requests/><location-2/><barcode>0UBU0152192</barcode><opac-note/></item-data><session-id>3JDSRTEPPTJSU9R7471TKFRY6IV8PBRFMUAPBYHNE3573SPKPD</session-id></circ-status>";
+
+    }
+
+
+
+}
+
