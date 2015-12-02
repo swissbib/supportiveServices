@@ -13,11 +13,17 @@
 
     </path>
 
+
     <path id="availabilityJar">
         <fileset dir="build/jar">
             <include name="*.jar"/>
         </fileset>
     </path>
+
+    <fileset id="libsForWEBINF" dir="build/lib" >
+        <include name="**/**"/>
+        <exclude name="servlet-api.jar"/>
+    </fileset>
 
 
 
@@ -102,7 +108,7 @@
                 <attribute name="Built-At" value="${build-info.current-time}" />
                 <attribute name="Application-Name" value="Web Application availability functions" />
             </manifest>
-            <lib dir="build/lib"/>
+            <lib refid="libsForWEBINF"/>
             <classes dir="build/resources"/>
         </war>
     </target>
