@@ -75,6 +75,9 @@ public class ImageTransformer extends HttpServlet {
                     numberExcep.printStackTrace();
                 }
             }
+            //we need a quick solution to suppress delivery of large pictures because of
+            //law restrictions
+            scale = 0.1;
             //urlToImage = urlToImage + ".jpg";
 
             transformerLog.debug("got request: " + urlToImage);
