@@ -66,18 +66,18 @@ public class ImageTransformer extends HttpServlet {
         try {
 
 
-            double scale = 0.8;
+            double scale = 0.2;
             if (!bPosters){
                 try {
                     scale = Double.valueOf(request.getParameter("scale"));
                 } catch (Exception numberExcep)  {
-                    scale = 0.66;
+                    scale = 0.2;
                     numberExcep.printStackTrace();
                 }
             }
             //we need a quick solution to suppress delivery of large pictures because of
             //law restrictions
-            scale = 0.2;
+            scale = scale <= 0.2 ? scale : 0.2;
             //urlToImage = urlToImage + ".jpg";
 
             transformerLog.debug("got request: " + urlToImage);
