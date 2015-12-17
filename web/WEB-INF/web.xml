@@ -51,6 +51,13 @@
         <display-name>ImageTransformer</display-name>
         <servlet-name>ImageTransformer</servlet-name>
         <servlet-class>org.swissbib.extern.xSwissBib.ImageTransformer</servlet-class>
+
+        <init-param>
+            <param-name>whiteListScaleIcons</param-name>
+            <param-value>resources/services/whitelistScaleIcons.properties</param-value>
+        </init-param>
+
+
     </servlet>
 
     <servlet>

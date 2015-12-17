@@ -5,6 +5,7 @@ package org.swissbib.extern.xSwissBib;
 import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +30,8 @@ import java.util.regex.Pattern;
  * To change this template use File | Settings | File Templates.
  */
 public class ImageTransformer extends HttpServlet {
+
+    private static ArrayList<AllowedCover> coversToMatch = new ArrayList<AllowedCover>();
 
     //Test um ein Adam-Bild abzurufen
     //dies noch mit den sourcen auf chbtptst, die nicht mehr den hier abgeänderten für posters entsprechen.
@@ -62,6 +69,7 @@ public class ImageTransformer extends HttpServlet {
             }
         }
 
+
         //System.out.println("imagePath: " + urlToImage);
         try {
 
@@ -77,7 +85,22 @@ public class ImageTransformer extends HttpServlet {
             }
             //we need a quick solution to suppress delivery of large pictures because of
             //law restrictions
-            scale = scale <= 0.2 ? scale : 0.2;
+            boolean allowedCover = false;
+            for (AllowedCover aC: coversToMatch) {
+                if (aC.urlRegEx.matcher(urlToImage).find()) {
+                    allowedCover = true;
+                    try {
+                        scale = Double.valueOf(aC.scale);
+
+                    } catch (Exception ex) {
+                        transformerLog.error("error using scale from white list", ex);
+                        scale = 0.2;
+                        allowedCover = false;
+                    }
+                    break;
+                }
+            }
+            scale = allowedCover || scale <= 0.2 ? scale : 0.2;
             //urlToImage = urlToImage + ".jpg";
 
             transformerLog.debug("got request: " + urlToImage);
@@ -125,4 +148,36 @@ public class ImageTransformer extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request,response);
     }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+
+        String whiteListWithIconSize = config.getInitParameter("whiteListScaleIcons");
+
+        InputStream whiteListStream = ImageTransformer.class.getClassLoader().getResourceAsStream(whiteListWithIconSize);
+        if (null != whiteListStream) {
+            Properties coverWhiteList  = new Properties();
+            try {
+                coverWhiteList.load(whiteListStream);
+                Iterator<String> propertyIterator = coverWhiteList.stringPropertyNames().iterator();
+                while (propertyIterator.hasNext()) {
+                    AllowedCover tC = new AllowedCover();
+                    tC.coverURL = propertyIterator.next();
+                    tC.scale = coverWhiteList.getProperty(tC.coverURL);
+                    tC.urlRegEx = Pattern.compile(tC.coverURL);
+                    coversToMatch.add(tC);
+
+                }
+            } catch (IOException ioException ) {
+                transformerLog.error("error loading cover properties", ioException);
+            }
+        }
+        super.init(config);
+    }
+}
+
+class AllowedCover {
+    public String coverURL;
+    public Pattern urlRegEx;
+    public String scale;
 }
