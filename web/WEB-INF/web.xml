@@ -60,6 +60,7 @@
 
     </servlet>
 
+    <!--
     <servlet>
         <display-name>ProtocolWrapper</display-name>
         <servlet-name>ProtocolWrapper</servlet-name>
@@ -69,7 +70,7 @@
             <param-value>ESCAPED_AND_PERCENT</param-value>
         </init-param>
     </servlet>
-
+    -->
 
 
 
@@ -111,12 +112,13 @@
         <url-pattern>/ImageTransformer</url-pattern>
     </servlet-mapping>
 
+    <!--
     <servlet-mapping>
         <servlet-name>ProtocolWrapper</servlet-name>
         <url-pattern>/ProtocolWrapper</url-pattern>
     </servlet-mapping>
 
-
+    -->
 
 
   <!-- Custom MIME mapping -->
