@@ -80,7 +80,7 @@
         </onOrder>
         <semesterapparat>
             <mapField>getLoanState</mapField>
-            <mapValues>Course Reading</mapValues>
+            <mapValues>Course Reading##Accessible in course reserve</mapValues>
         </semesterapparat>
         <exhibition>
             <mapField>getLoanState</mapField>
