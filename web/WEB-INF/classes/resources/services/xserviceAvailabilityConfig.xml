@@ -76,7 +76,7 @@
         </inProcess>
         <onOrder>
             <mapField>getLoanState</mapField>
-            <mapValues>On order##Not received</mapValues>
+            <mapValues>On order##Not received##Claimed</mapValues>
         </onOrder>
         <semesterapparat>
             <mapField>getLoanState</mapField>
