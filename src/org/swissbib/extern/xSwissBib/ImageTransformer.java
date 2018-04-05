@@ -5,6 +5,10 @@ package org.swissbib.extern.xSwissBib;
 import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,8 +18,15 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
@@ -105,13 +116,15 @@ public class ImageTransformer extends HttpServlet {
 
             transformerLog.debug("got request: " + urlToImage);
 
-            URL url = new URL(urlToImage);
+            InputStream is = performRequest(urlToImage);
+
+            //URL url = new URL(is);
 
             //Iterator readers = ImageIO.getImageReadersByFormatName("dicom");
             //GIFImageReader reader = (GIFImageReader)readers.next();
             //BufferedImage bufI = reader.read();
 
-            BufferedImage bufI = ImageIO.read(url);
+            BufferedImage bufI = ImageIO.read(is);
             //String [] s = ImageIO.getReaderFormatNames();
 
             int width =   (int)(bufI.getWidth() * scale );
@@ -174,6 +187,85 @@ public class ImageTransformer extends HttpServlet {
         }
         super.init(config);
     }
+
+    private static class DefaultTrustManager implements X509TrustManager {
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return null;
+        }
+    }
+
+    private InputStream performRequest(String urlToImage) {
+
+        //testlink for redirect to https
+        //https://externalservices.swissbib.ch/services/ImageTransformer?imagePath=http://www.e-rara.ch/titlepage/doi/10.3931/e-rara-26903/128&scale=1
+        //http://localhost:8080/services/ImageTransformer?imagePath=http://biblio.unibe.ch/adam/karten/ZB_Kart_413_11.jpg&scale=1
+        //http://localhost:8080/services/ImageTransformer?imagePath=http://www.e-rara.ch/titlepage/doi/10.3931/e-rara-26903/128&scale=1
+        //https://stackoverflow.com/questions/1201048/allowing-java-to-use-an-untrusted-certificate-for-ssl-https-connection
+        URL resourceUrl, base, next;
+        HttpURLConnection conn = null;
+        String location;
+
+        try {
+            SSLContext ctx = SSLContext.getInstance("TLS");
+            ctx.init(new KeyManager[0], new TrustManager[]{new DefaultTrustManager()}, new SecureRandom());
+            SSLContext.setDefault(ctx);
+        } catch (NoSuchAlgorithmException | KeyManagementException exc) {
+            exc.printStackTrace();
+        }
+
+
+        try {
+            while (true) {
+                resourceUrl = new URL(urlToImage);
+                conn = (HttpURLConnection) resourceUrl.openConnection();
+
+                conn.setConnectTimeout(15000);
+                conn.setReadTimeout(15000);
+                conn.setInstanceFollowRedirects(false);   // Make the logic below easier to detect redirections
+                conn.setRequestProperty("User-Agent", "Mozilla/5.0...");
+
+                switch (conn.getResponseCode()) {
+                    case HttpURLConnection.HTTP_MOVED_PERM:
+                    case HttpURLConnection.HTTP_MOVED_TEMP:
+                        location = conn.getHeaderField("Location");
+                        location = URLDecoder.decode(location, "UTF-8");
+                        base = new URL(urlToImage);
+                        next = new URL(base, location);  // Deal with relative URLs
+                        urlToImage = next.toExternalForm();
+                        continue;
+                }
+
+                break;
+            }
+        } catch (IOException exception) {
+
+            exception.printStackTrace();
+            conn = null;
+
+        }
+
+        InputStream ios = null;
+
+        if (null != conn) {
+            try {
+                ios = conn.getInputStream();
+            } catch (IOException ioEx) {
+                ioEx.printStackTrace();
+            }
+        }
+        //todo use optional for this case
+        return ios;
+    }
+
+
 }
 
 class AllowedCover {
