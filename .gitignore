@@ -1,3 +1,4 @@
 !.gitignore
 #web/WEB-INF/classes/resources/services/xserviceAvailabilityConfig.xml
 web/WEB-INF/classes/resources/services/mapping.librarysystem.xml
+.idea
