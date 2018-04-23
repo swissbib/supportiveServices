@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/lib/guava-18.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/lib/json-simple-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/lib/commons-lang-2.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/lib/swissbib.utilities.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/lib/servlet-api.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/lib/log4j-1.2.17.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

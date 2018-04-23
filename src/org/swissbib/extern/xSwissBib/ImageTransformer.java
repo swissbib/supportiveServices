@@ -5,9 +5,6 @@ package org.swissbib.extern.xSwissBib;
 import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -22,9 +19,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -213,14 +207,16 @@ public class ImageTransformer extends HttpServlet {
         HttpURLConnection conn = null;
         String location;
 
-        try {
-            SSLContext ctx = SSLContext.getInstance("TLS");
-            ctx.init(new KeyManager[0], new TrustManager[]{new DefaultTrustManager()}, new SecureRandom());
-            SSLContext.setDefault(ctx);
-        } catch (NoSuchAlgorithmException | KeyManagementException exc) {
-            exc.printStackTrace();
-        }
+        //try {
+        //    SSLContext ctx = SSLContext.getInstance("TLS");
+        //    ctx.init(new KeyManager[0], new TrustManager[]{new DefaultTrustManager()}, new SecureRandom());
+        //    SSLContext.setDefault(ctx);
+        //} catch (NoSuchAlgorithmException | KeyManagementException exc) {
+        //    exc.printStackTrace();
+        //}
 
+        //it's really a qick hack to support redirects
+        //haven't had enough time to make it proper and tested
 
         try {
             while (true) {
