@@ -52,9 +52,12 @@ public class AvailabilityStatus {
 
     protected static Pattern pDueDateLong = Pattern.compile("([0-9]{2}/[0-9]{2}/[0-9]{4,4})");
     protected static Pattern pDueDateShort = Pattern.compile("([0-9]{2}/[0-9]{2}/[0-9]{2,2})");
+    protected static Pattern pDueDateCustomized = Pattern.compile("On Hold##Requested");
     protected static Pattern pisItemLost = Pattern.compile("(missing)|(removed)|(vermisst)");
     protected static Pattern pisItemNotBorrowed = Pattern.compile("(no loan)|(nicht ausleihbar)");
     protected static Pattern pnR = Pattern.compile("(\\d+)");
+
+    protected static Pattern pDueDateEscape = Pattern.compile("\\\\#\\\\#");
 
 
     private final static Logger availLog = Logger.getLogger("swissbibavail");
@@ -169,7 +172,7 @@ public class AvailabilityStatus {
                 if ( this.additionalFields.size() > 0 ) {
                     //at the moment we don't care about the idea to define additional fields in configuration
                     //we assume to evaluate fix the three fields in Aleph
-                    String duedate = item.getDueDate() != null ? item.getDueDate().trim() : "";
+                    String duedate = item.getDueDate() != null ? this.prepareDueDate( item.getDueDate().trim()) : "";
                     String duehour = item.getDueHour() != null ? item.getDueHour().trim() : "";
                     String norequests = item.getNumberRequests() != null ? item.getNumberRequests().trim() : "";
 
@@ -190,10 +193,12 @@ public class AvailabilityStatus {
                         statusInformation.put("borrowingInformation",borrowingInformation);
 
                     } else {
+                        //we need this case for onhold##requested where we don't have a due date
 
                         statusInformation.put("statusfield",AvailabilityStatus.lendable_available);
 
                     }
+
 
 
                 } else {
@@ -244,27 +249,6 @@ public class AvailabilityStatus {
         }
 
 
-
-
-
-        /*
-
-        } catch (ClassNotFoundException cnfE) {
-
-            cnfE.printStackTrace();
-        } catch (NoSuchMethodException nsmE) {
-
-            nsmE.printStackTrace();
-        } catch (IllegalAccessException iaE) {
-            iaE.printStackTrace();
-        }  catch (InvocationTargetException ivtE) {
-            ivtE.printStackTrace();
-        }
-
-        */
-
-
-
         return matched;
 
     }
@@ -272,7 +256,9 @@ public class AvailabilityStatus {
 
     protected boolean hasDueDate(String stringToAnalyze) {
 
-        boolean hasDateInTagField = AvailabilityStatus.pDueDateLong.matcher(stringToAnalyze).find() || AvailabilityStatus.pDueDateShort.matcher(stringToAnalyze).find();
+        boolean hasDateInTagField = AvailabilityStatus.pDueDateLong.matcher(stringToAnalyze).find() ||
+                AvailabilityStatus.pDueDateShort.matcher(stringToAnalyze).find(); //||
+                //AvailabilityStatus.pDueDateCustomized.matcher(stringToAnalyze).find();
 
         if (!hasDateInTagField) {
             //search for a defined value in dueDate
@@ -311,7 +297,8 @@ public class AvailabilityStatus {
 
                     String definedPattern = m.group(1);
                     String definedValuesForPattern = m.group(2);
-                    if (definedPattern != null && !definedPattern.equalsIgnoreCase("") && definedPattern.equalsIgnoreCase(currentDueDate)) {
+                    if (definedPattern != null && !definedPattern.equalsIgnoreCase("") &&
+                            this.prepareDueDate(definedPattern).equalsIgnoreCase(currentDueDate)) {
                         searchedValues = new HashMap<String, String>();
                         searchedValues.put(definedPattern,definedValuesForPattern);
                         break;
@@ -464,7 +451,11 @@ public class AvailabilityStatus {
     }
 
 
+    private String prepareDueDate(String rawDueDate)  {
 
+        return  pDueDateEscape.matcher(rawDueDate).replaceAll("##");
+
+    }
 
 
 }
