@@ -8,7 +8,7 @@
             <additionalFields conjunction="or">
 
                 <!-- any other values in due-date are splitted with ## Pattern and use the languages! -->
-                <due-date>On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##REQUESTED{de!on reserve#en!on reserve#fr!on reserve#it!on reserve}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
+                <due-date>On Hold\#\#Requested{de!on hold#en!on hold#fr!on hold#it!on hold}##On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##REQUESTED{de!on reserve#en!on reserve#fr!on reserve#it!on reserve}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
 
                 <due-hour/>
                 <no-requests/>
@@ -20,7 +20,7 @@
             <additionalFields conjunction="or">
 
                 <!-- any other values in due-date are splitted with ## Pattern and use the languages! -->
-                <due-date>On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##REQUESTED{de!on reserve#en!on reserve#fr!on reserve#it!on reserve}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
+                <due-date>On Hold\#\#Requested{de!bestellt und reserviert#en!bestellt und reserviert#fr!bestellt und reserviert#it!bestellt und reserviert}##On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##REQUESTED{de!on reserve#en!on reserve#fr!on reserve#it!on reserve}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
 
                 <due-hour/>
                 <no-requests/>
