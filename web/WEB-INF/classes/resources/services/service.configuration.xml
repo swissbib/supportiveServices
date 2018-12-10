@@ -38,6 +38,11 @@
         <contextname>services</contextname>
     </service>
 
+    <service>
+        <servicename>AvailabilityRequestByLibraryNetwork</servicename>
+        <default>TRUE</default>
+        <contextname>services</contextname>
+    </service>
 
     <service>
         <servicename>ImageTransformer</servicename>

@@ -48,7 +48,7 @@ public class AvailabilityFilter extends AlephStreamFilter{
         return itemList.toArray(new CirculationStateItem[itemList.size()]);
     }
 
-    public CirculationStateResponse getCircStateResonse(){
+    public CirculationStateResponse getCircStateResponse(){
 
         CirculationStateResponse response = new CirculationStateResponse(this.getCircStateItems());
         if (this.errorOccured) {

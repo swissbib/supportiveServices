@@ -2,6 +2,7 @@ package org.swissbib.extern.xSwissBib.librarysystems.aleph.filter;
 
 import javax.xml.stream.StreamFilter;
 import javax.xml.stream.XMLStreamReader;
+import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateResponse;
 
 /**
  * Created by Project SwissBib, www.swissbib.org.
@@ -19,6 +20,10 @@ public class AlephStreamFilter implements StreamFilter {
 
     public AlephStreamFilter(String sysNumber) {
         this.sysnumber = sysNumber;
+    }
+
+    public CirculationStateResponse getCircStateResponse() {
+        return null;
     }
 
     

@@ -57,6 +57,8 @@ public class CirculationStateResponse {
         this.itemList.add(item) ;
     }
 
+    public void clearItemList() { this.itemList.clear(); }
+
     public String getSession() {
         return session;
     }

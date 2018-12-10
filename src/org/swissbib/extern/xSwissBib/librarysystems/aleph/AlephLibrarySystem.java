@@ -1,26 +1,26 @@
 package org.swissbib.extern.xSwissBib.librarysystems.aleph;
-      
 
 import org.apache.log4j.Logger;
 import org.swissbib.extern.xSwissBib.librarysystems.LibrarySystem;
-import org.swissbib.extern.xSwissBib.librarysystems.aleph.filter.AvailabilityFilter;
 import org.swissbib.extern.xSwissBib.librarysystems.aleph.filter.AlephErrorStreamFilter;
+import org.swissbib.extern.xSwissBib.librarysystems.aleph.filter.AlephStreamFilter;
+import org.swissbib.extern.xSwissBib.librarysystems.aleph.filter.AvailabilityFilter;
+import org.swissbib.extern.xSwissBib.librarysystems.aleph.filter.AvailabilityFilterByLibraryNetwork;
+import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateItem;
 import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateResponse;
-import org.swissbib.extern.xSwissBib.services.common.XServiceUtilities;
 import org.swissbib.extern.xSwissBib.services.common.XServiceException;
+import org.swissbib.extern.xSwissBib.services.common.XServiceUtilities;
 import org.swissbib.utilities.web.HTTPConnectionHandling;
 
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamException;
-
 import javax.xml.stream.XMLStreamConstants;
-
-
-import java.io.*;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.stream.StreamSource;
 import java.net.HttpURLConnection;
+import java.util.HashMap;
 import java.util.Scanner;
+
 
 /**
  * Created by Project SwissBib, www.swissbib.org. 
@@ -30,8 +30,6 @@ import java.util.Scanner;
  *
  */
 public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConstants{
-
-
     private final static String X_SERVER_CODE = "/X?";
     private final static String OP_PARAMETER = "op=";
     private final static String HTTP_GET_DELIMITER = "&";
@@ -48,19 +46,15 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
     private final static String OAI_METADATA = "metadata";
     private final static String OAI_IDENTIFIER = "identifier";
 
-
     private final static String MARCXML_DATAFIELD = "datafield";
     private final static String MARCXML_ATTR_TAG = "tag";
     private final static String MARCXML_ATTR_TAG_AVA = "AVA";
     private final static String MARCXML_SUBFIELD = "subfield";
     private final static String MARCXML_SUBFIELD_CODE_AVA = "e";
     private final static String MARCXML_SUBFIELD_CODE = "code";
-
-
     private final static String MARCXML_AVAILABLE_VALUE = "available";
     private final static String MARCXML_AVAILABLE_ERROR = "error";
     private final static String MARCXML_AVAILABLE_ERROR_MESSAGE = "error_message";
-
 
     private final static String XSERVER_LOGIN_ERROR = "login";
     private final static String XSERVER_LOGIN_APACHE_ERROR = "html";
@@ -68,15 +62,12 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
     private final static String XSERVER_CIRCSTATUS_ERROR_FIELD = "error";
     private final static String XSERVER_LOGIN_ERROR_ERRORFIELD = "error";
 
+    private final static int AVAILABILITY_STATE_GREEN = 0;
+    private final static int AVAILABILITY_STATE_RED = 1;
 
     private final static Logger availLog = Logger.getLogger("swissbibavail");
 
-
-
-
-
-    public CirculationStateResponse requestCircultation() throws XServiceException {
-
+    public CirculationStateResponse requestCircultation(int type) throws XServiceException {
         CirculationStateResponse response = null;
         String xServerResponse = null;
 
@@ -84,24 +75,17 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
             String.format(getLibraryProperties().getCircQueryParameter(),XServiceUtilities.getStringArrayAsString(getDocItems()))
                 + getLibraryProperties().getAnonymusUser();
 
-
         try {
-
             xServerResponse = this.doAlephXRequest(alephXRequest);
 
-
             //ToDo better check of response using this op-code -> it seems Aleph knows a lot of errors...
-
             this.requestURL = alephXRequest;
             //this.checkResponseFromSystem(xServerResponse);
 
-            response = this.parseGetCircStatusStax(xServerResponse);
+            response = this.parseGetCircStatusStax(xServerResponse, type);
             response.setRequestedURL(alephXRequest);
-
-
         }
         catch (XMLStreamException stE){
-
             availLog.warn("XMLStreamException while accessing remote library system: ", stE);
             throw new XServiceException("XMLStreamException while accessing remote library system: " + stE.getMessage());
         }
@@ -109,23 +93,40 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
             availLog.warn("IOException while accessing remote library system: ", ioE);
             throw new XServiceException("IOException while accessing remote library system: " + ioE.getMessage());
         } catch (Throwable thE) {
-
             availLog.warn("Throwable Exception while accessing remote library system: ", thE);
             throw new XServiceException("Throwable Exception while accessing remote library system: " + thE.getMessage());
         }
 
-        response.formatItemsResponse(this.getInstitution(),this.getLanguage());
+        if (type == LibrarySystem.AVAILABILITY_REQUEST_BY_BARCODE) {
+            // just leave the items in its given state...
+        } else if (type == LibrarySystem.AVAILABILITY_REQUEST_BY_LIBRARYCODE) {
+            // go through all items of the response you got back from the xmlparser; get best loanstatus for each sub-library:
+            org.swissbib.extern.xSwissBib.services.circulation.CirculationStateItem[] items = response.getItemList();
+            String libCode;
+            HashMap<String, Integer> libBestAvail = new HashMap<String, Integer>();
+            for (org.swissbib.extern.xSwissBib.services.circulation.CirculationStateItem item : items) {
+                if (item.getLoanState().equals("Loan") && item.getDueDate() == null){
+                    libCode = item.getSublibrary();
+                    libBestAvail.put(libCode, this.AVAILABILITY_STATE_GREEN);
+                }
+            }
 
+            // create new response-items:
+            response.clearItemList();
+            for (HashMap.Entry<String, Integer> entry : libBestAvail.entrySet()) {
+                CirculationStateItem item = new CirculationStateItem();
+                item.setSubLibraryAvailability(entry.getKey(), entry.getValue());
+                response.setItemList(item);
+            }
+        }
+
+        if (type == LibrarySystem.AVAILABILITY_REQUEST_BY_BARCODE) response.formatItemsResponse(this.getInstitution(),this.getLanguage());
 
         return response;
     }
 
     public void checkResponseFromSystem(String xServerResponse) throws XServiceException {
-
-
-
         try {
-
             ByteArrayInputStream bAxServerResponse = new ByteArrayInputStream(xServerResponse.getBytes("UTF-8"));
             final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
@@ -133,7 +134,6 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
 
             XMLStreamReader p = inputFactory.createFilteredReader(inputFactory.createXMLStreamReader
                     (new StreamSource(bAxServerResponse)),aFilter) ;
-
 
             while(p.hasNext() )
             {   try {
@@ -146,46 +146,31 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
                 }
             }
 
-
-
         } catch (UnsupportedEncodingException useE){
-
             StringBuilder sB  = new StringBuilder();
-
             for (StackTraceElement sE : useE.getStackTrace() ) {
-
                 sB.append(sE.getMethodName()).append("\n");
                 sB.append(sE.getClassName()).append("\n");
                 sB.append(sE.getFileName()).append("\n");
                 sB.append(sE.getLineNumber()).append("\n");
             }
-
             throw new XServiceException(sB.toString());
         } catch (XMLStreamException xmlSE){
-
             StringBuilder sB  = new StringBuilder();
-
             for (StackTraceElement sE : xmlSE.getStackTrace() ) {
-
                 sB.append(sE.getMethodName()).append("\n");
                 sB.append(sE.getClassName()).append("\n");
                 sB.append(sE.getFileName()).append("\n");
                 sB.append(sE.getLineNumber()).append("\n");
             }
-
             throw new XServiceException(sB.toString());
         }
-
-
     }
 
     private String doAlephXRequest(String requestedURL) throws IOException {
         String response = "";
         this.requestURL = requestURL;
-
-
         availLog.info("URL library system: " + requestedURL);
-
         HTTPConnectionHandling connectionHandling = null;
 
         if (null != this.getProxyServer() && this.getProxyServer().length() > 0) {
@@ -196,18 +181,11 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
             connectionHandling = new HTTPConnectionHandling();
         }
 
-
-
         availLog.debug("proxy definition for individual system: " + this.getLibraryProperties().isUseProxy() + " -> both must be true to use proxy server");
-
         HttpURLConnection connection = connectionHandling.getHTTPConnection(requestedURL,
                                                                             this.getLibraryProperties().isUseProxy());
 
-
         InputStream is = (InputStream) connection.getContent();
-
-
-
         response = new Scanner( is ).useDelimiter( "\\Z" ).next();
 
         availLog.debug("\nresponse from system");
@@ -218,29 +196,22 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
         return response;
     }
 
-
-
-
-
-
-
-
-
-
-    private CirculationStateResponse parseGetCircStatusStax(String xServerResponse) throws UnsupportedEncodingException,
-                                                                                            XMLStreamException
+    private CirculationStateResponse parseGetCircStatusStax(String xServerResponse, int type) throws UnsupportedEncodingException,
+                                                                                            XMLStreamException, Exception
                                                                                                         {
-
-
         ByteArrayInputStream bAxServerResponse = new ByteArrayInputStream(xServerResponse.getBytes("UTF-8"));
         final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
-        AvailabilityFilter aFilter = new AvailabilityFilter(this.getDocItems()[0],this.getBarcode(),this.getInstitution() );
-        
+        AlephStreamFilter aFilter;
+        if (type == AVAILABILITY_REQUEST_BY_BARCODE) {
+            aFilter = new AvailabilityFilter(this.getDocItems()[0],this.getBarcode(),this.getInstitution() );
+        } else if (type == AVAILABILITY_REQUEST_BY_LIBRARYCODE) {
+            aFilter = new AvailabilityFilterByLibraryNetwork(this.getDocItems()[0],this.getInstitution() );
+        }
+        else throw new Exception("unsupported availability request type");
+
         XMLStreamReader p = inputFactory.createFilteredReader(inputFactory.createXMLStreamReader
                 (new StreamSource(bAxServerResponse)),aFilter) ;
-        //p.require(START_ELEMENT, null, "bla");
-
 
         while(p.hasNext() )
         {   try {
@@ -253,22 +224,13 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
                 p.next();
             }
         }
-
-
-
-        return aFilter.getCircStateResonse();
-
+        return aFilter.getCircStateResponse();
     }
-
 
     private String doAlephTestrequest() {
         String[] barcodes = {"DSVN1043418","0UBU0152192"};
         this.setBarcode(barcodes);
         return "<circ-status> <item-data><z30-description/><loan-status>Consult LibInfo</loan-status><due-date/><due-hour/><sub-library>Bern UB Romanistik</sub-library><collection>Romanische Philologie Freihandbereich</collection><location>RO II J 580</location><pages/><no-requests/><location-2/><barcode>DSVN1043418</barcode><opac-note/></item-data><item-data><z30-description/><loan-status>Loan</loan-status><due-date/><due-hour/><sub-library>Bern UB ZB</sub-library><collection>Magazin (U1)</collection><location>ZB Rom var 339</location><pages/><no-requests/><location-2/><barcode>000846409</barcode><opac-note/></item-data><item-data><z30-description/><loan-status>Loan</loan-status><due-date/><due-hour/><sub-library>Basel Frz. Sprach- &amp; Lit-Wiss.</sub-library><collection>Freihandbereich</collection><location>FRA 1 Fla 40.334</location><pages/><no-requests/><location-2/><barcode>DSVN3363045</barcode><opac-note/></item-data><item-data><z30-description/><loan-status>Loan</loan-status><due-date/><due-hour/><sub-library>Basel UB</sub-library><collection>Magazin</collection><location>Aoo 3253</location><pages/><no-requests/><location-2/><barcode>0UBU0152192</barcode><opac-note/></item-data><session-id>3JDSRTEPPTJSU9R7471TKFRY6IV8PBRFMUAPBYHNE3573SPKPD</session-id></circ-status>";
-
     }
 
-
-
 }
-

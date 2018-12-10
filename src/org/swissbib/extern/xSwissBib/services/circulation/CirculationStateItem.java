@@ -2,6 +2,8 @@ package org.swissbib.extern.xSwissBib.services.circulation;
 
 import org.json.simple.JSONObject;
 
+import java.util.AbstractMap;
+
 /**
  * Created by Project SwissBib, www.swissbib.org.
  * Author: Günter Hipler
@@ -24,6 +26,7 @@ public class CirculationStateItem {
     String pages = null;
     String location2 = null;
     String opacnote = null;
+    AbstractMap.SimpleEntry<String, Integer> subLibraryAvailability;
 
     JSONObject itemStatusInfomation;
     
@@ -160,6 +163,11 @@ public class CirculationStateItem {
         this.opacnote = opacnote;
     }
 
+    public void setSubLibraryAvailability(String sublib, Integer state) {
+        subLibraryAvailability = new AbstractMap.SimpleEntry<String, Integer>(sublib, state);
+    }
+
+    public AbstractMap.SimpleEntry<String, Integer> getSubLibraryAvailability() { return subLibraryAvailability; }
 
     public JSONObject getItemStatusInfomation() {
 

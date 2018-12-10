@@ -14,6 +14,8 @@ import java.util.HashMap;
  * Time: 22:13:13
  */
 public abstract class LibrarySystem {
+    public final static int AVAILABILITY_REQUEST_BY_BARCODE = 0;
+    public final static int AVAILABILITY_REQUEST_BY_LIBRARYCODE = 1;
 
     private LibraryProperties libraryProperties = null;
     private String[] docItems = null;
@@ -96,7 +98,7 @@ public abstract class LibrarySystem {
         this.institution = institution;
     }
 
-    public abstract CirculationStateResponse requestCircultation() throws XServiceException;
+    public abstract CirculationStateResponse requestCircultation(int type) throws XServiceException;
 
 
 
