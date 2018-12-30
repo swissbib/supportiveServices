@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="all_appender" class="org.apache.log4j.RollingFileAppender">
+        <param name="maxFileSize" value="50MB" />
+        <param name="maxBackupIndex" value="20" />
+        <param name="File" value="/tmp/swissbib/all.log" />
+        <layout class="org.apache.log4j.TTCCLayout">
+            <param name="DateFormat" value="ISO8601" />
+        </layout>
+    </appender>
+
+
+    <appender name="SWISSBIBAVAIL_appender" class="org.apache.log4j.RollingFileAppender">
+        <param name="maxFileSize" value="50MB" />
+        <param name="maxBackupIndex" value="20" />
+        <param name="File" value="/tmp/swissbib/swissbib.avail.log" />
+        <layout class="org.apache.log4j.TTCCLayout">
+            <param name="DateFormat" value="ISO8601" />
+        </layout>
+    </appender>
+
+    <appender name="ImageTransformer_appender" class="org.apache.log4j.RollingFileAppender">
+        <param name="maxFileSize" value="50MB" />
+        <param name="maxBackupIndex" value="20" />
+        <param name="File" value="/tmp/swissbib/imageTransformer.log" />
+        <layout class="org.apache.log4j.TTCCLayout">
+            <param name="DateFormat" value="ISO8601" />
+        </layout>
+    </appender>
+
+
+    <appender name="ProtocolWrapper_appender" class="org.apache.log4j.RollingFileAppender">
+        <param name="maxFileSize" value="50MB" />
+        <param name="maxBackupIndex" value="20" />
+        <param name="File" value="/tmp/swissbib/protocolWrapper.log" />
+        <layout class="org.apache.log4j.TTCCLayout">
+            <param name="DateFormat" value="ISO8601" />
+        </layout>
+    </appender>
+
+
+    <!--
+    <appender name="ExternalServicesRedirect_appender" class="org.apache.log4j.RollingFileAppender">
+        <param name="maxFileSize" value="20MB" />
+        <param name="maxBackupIndex" value="1" />
+        <param name="File" value="/tmp/swissbib/externelServicesRedirect.log" />
+        <layout class="org.apache.log4j.TTCCLayout">
+            <param name="DateFormat" value="ISO8601" />
+        </layout>
+    </appender>
+    -->
+
+    <!-- start swissbib specific loggerr-->
+
+    <logger name="swissbibavail" additivity="false">
+        <level value="debug" />
+        <appender-ref ref="SWISSBIBAVAIL_appender" />
+    </logger>
+
+    <!-- end swissbib specific logger-->
+
+    <!--
+    <logger name="org.swissbib.extern.xSwissBib.ExternalServicesRedirect" additivity="false">
+
+        <level value="debug" />
+        <appender-ref ref="ExternalServicesRedirect_appender" />
+    </logger>
+    -->
+    <logger name="org.swissbib.extern.xSwissBib.ImageTransformer" additivity="false">
+        <level value="debug" />
+        <appender-ref ref="ImageTransformer_appender" />
+    </logger>
+
+
+    <logger name="org.swissbib.extern.xSwissBib.services.forwarder.ProtocolWrapper" additivity="false">
+        <level value="debug" />
+        <appender-ref ref="ProtocolWrapper_appender" />
+    </logger>
+
+
+
+
+    <root>
+        <priority value="debug"/>
+        <appender-ref ref="all_appender" />
+    </root>
+</log4j:configuration>

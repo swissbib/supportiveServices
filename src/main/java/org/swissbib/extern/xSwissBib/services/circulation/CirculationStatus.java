@@ -1,4 +1,4 @@
-package org.swissbib.xSwissBib.services.circulation;
+package org.swissbib.extern.xSwissBib.services.circulation;
 
 /**
  * Created by Project SwissBib, www.swissbib.org.

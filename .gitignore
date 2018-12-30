@@ -4,3 +4,5 @@ web/WEB-INF/classes/resources/services/mapping.librarysystem.xml
 .idea
 gradle
 .gradle
+build
+src/main/webapp/WEB-INF/classes/resources/services/mapping.librarysystem.xml

@@ -17,6 +17,10 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -101,10 +105,10 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
             // just leave the items in its given state...
         } else if (type == LibrarySystem.AVAILABILITY_REQUEST_BY_LIBRARYCODE) {
             // go through all items of the response you got back from the xmlparser; get best loanstatus for each sub-library:
-            org.swissbib.extern.xSwissBib.services.circulation.CirculationStateItem[] items = response.getItemList();
+            CirculationStateItem[] items = response.getItemList();
             String libCode;
             HashMap<String, Integer> libBestAvail = new HashMap<String, Integer>();
-            for (org.swissbib.extern.xSwissBib.services.circulation.CirculationStateItem item : items) {
+            for (CirculationStateItem item : items) {
                 if (item.getLoanState().equals("Loan") && item.getDueDate() == null){
                     libCode = item.getSublibrary();
                     libBestAvail.put(libCode, this.AVAILABILITY_STATE_GREEN);

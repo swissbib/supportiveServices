@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serviceconfiguration>
+
+    <!--
+       servicename: name des services zur Bedienung der Anfrage
+            bei uns aktuell: servlet name (in Zukunft: Controller eines jeden MVC-Frameworks)
+       default: [TRUE|FALSE]
+            ist in den request parametern der Parameter servicename angegeben sucht sich der redirect service
+             den Namen aus der Konfiguration (servicename)
+             fehlt der Parameter, wird der mit default gekennzeichnete service angesprochen
+             bei uns ist dies zur Zeit availability
+
+       contextname: name des Application Context: bei uns zur Zeit TouchPoint
+
+
+       Beispiel:
+       Anfrage
+       http://www.swissbib.ch/TouchPoint/ExternalServicesRedirect?sysnumber=000229081&barcode=ILUM02095136&idls=ILU01&language=de
+
+       wird umgeleitet nach
+       web.xml[<param-name>targetServer</param-name>]/[contextname]/[contextname]?sysnumber=000229081&barcode=ILUM02095136&idls=ILU01&language=de
+       also
+       http://sb-tp3.swissbib.unibas.ch:8080/TouchPoint/AvailabilityRequest?sysnumber=000229081&barcode=ILUM02095136&idls=ILU01&language=de'
+       (dieser service ist als default gekennzeit, es fehlt der parameter servicename im urspruenglichen request
+
+
+       fiktive Anfrage
+       http://www.swissbib.ch/TouchPoint/ExternalServicesRedirect?blabla=123&servicename=FiktiverService
+       http://sb-tp3.swissbib.unibas.ch:8080/FiktiverKontext/FiktiverService?blabla=123
+
+
+    -->
+
+
+    <service>
+        <servicename>AvailabilityRequest</servicename>
+        <default>TRUE</default>
+        <contextname>services</contextname>
+    </service>
+
+    <service>
+        <servicename>AvailabilityRequestByLibraryNetwork</servicename>
+        <default>TRUE</default>
+        <contextname>services</contextname>
+    </service>
+
+    <service>
+        <servicename>ImageTransformer</servicename>
+        <default>FALSE</default>
+        <contextname>services</contextname>
+    </service>
+
+
+    <!--
+    <service>
+        <servicename>FiktiverService</servicename>
+        <default>FALSE</default>
+        <contextname>FiktiverKontext</contextname>
+    </service>
+
+    -->
+
+
+
+</serviceconfiguration>

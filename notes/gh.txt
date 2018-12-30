@@ -1,0 +1,2 @@
+
+http://localhost:8080/services/AvailabilityRequest?sysnumber=006014873&barcode=BM2001402&idls=DSV01&language=de
