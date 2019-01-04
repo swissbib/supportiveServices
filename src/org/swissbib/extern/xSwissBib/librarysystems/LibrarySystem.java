@@ -98,6 +98,8 @@ public abstract class LibrarySystem {
         this.institution = institution;
     }
 
+    public abstract CirculationStateResponse requestCircultation(int type, String idls) throws XServiceException;
+
     public abstract CirculationStateResponse requestCircultation(int type) throws XServiceException;
 
 
