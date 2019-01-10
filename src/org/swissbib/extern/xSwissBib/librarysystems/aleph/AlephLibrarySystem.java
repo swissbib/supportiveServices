@@ -17,13 +17,13 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
 
 /**
@@ -69,6 +69,7 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
     private final static int AVAILABILITY_STATE_GREEN = 0;
     private final static int AVAILABILITY_STATE_RED = 1;
     private final static int AVAILABILITY_STATE_UNKNOWN = 2;
+    private final static int AVAILABILITY_STATE_ERROR = 3;
 
     private final static Logger availLog = Logger.getLogger("swissbibavail");
 
@@ -306,6 +307,8 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
                     availabilityState = this.AVAILABILITY_STATE_RED;
                 }
                 break;
+            default:
+                availabilityState = this.AVAILABILITY_STATE_ERROR;
         }
 
         return availabilityState;

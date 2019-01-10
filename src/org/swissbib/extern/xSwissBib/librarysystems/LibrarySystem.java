@@ -1,11 +1,9 @@
 package org.swissbib.extern.xSwissBib.librarysystems;
 
+import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateResponse;
 import org.swissbib.extern.xSwissBib.services.circulation.responsemodel.Institution;
 import org.swissbib.extern.xSwissBib.services.common.LibraryProperties;
 import org.swissbib.extern.xSwissBib.services.common.XServiceException;
-import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateResponse;
-
-import java.util.HashMap;
 
 /**
  * Created by Project SwissBib, www.swissbib.org.
