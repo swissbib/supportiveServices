@@ -3,30 +3,32 @@ package org.swissbib.extern.xSwissBib;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateItem;
+import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateResponse;
+import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateService;
 import org.swissbib.extern.xSwissBib.services.circulation.responsemodel.AvailabilityStatus;
 import org.swissbib.extern.xSwissBib.services.circulation.responsemodel.Institution;
-import org.xml.sax.SAXException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import org.swissbib.extern.xSwissBib.services.common.LibraryProperties;
 import org.swissbib.extern.xSwissBib.services.common.XServiceException;
-import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateService;
-import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateResponse;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
-
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.util.*;
-import org.swissbib.extern.xSwissBib.librarysystems.LibrarySystem;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.AbstractMap;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 
 /**
  * Created by Project SwissBib, www.swissbib.org.

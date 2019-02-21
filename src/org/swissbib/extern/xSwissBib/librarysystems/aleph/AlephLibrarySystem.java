@@ -252,58 +252,74 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
 
         switch (idls) {
             case "DSV01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("^Loan$|^short loan \\(14 days\\)$|Fernleihe|^short loan \\(7 days\\)$|^short loan \\(3 days\\)$|^short loan \\(1 day\\)$|^one day loan$|Reading Room|Use on-site|Special Reading Room|Online|Photocopy")) {
+                //if (isNullOrEmpty(dueDate)&&loanState.matches("^Loan$|^short loan \\(14 days\\)$|Fernleihe|^short loan \\(7 days\\)$|^short loan \\(3 days\\)$|^short loan \\(1 day\\)$|^one day loan$|Reading Room|Use on-site|Special Reading Room|Online|Photocopy")) {
+                if (isNullOrEmpty(dueDate) && loanState.matches("Loan|short loan \\(14 days\\)|(.*)Fernleihe(.*)|short loan \\(7 days\\)|short loan \\(3 days\\)|short loan \\(1 day\\)|one day loan|(.*)Reading Room(.*)|(.*)Use on-site(.*)|(.*)Special Reading Room(.*)|(.*)Online(.*)|(.*)Photocopy(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("Missing|Removed|Not available|Cancelled|On Repair|Binding|Archive copy, no loan|Relocation UB|Exhibition")) {
+                //} else if (!isNullOrEmpty(dueDate) || loanState.matches("Missing|Removed|Not available|Cancelled|On Repair|Binding|Archive copy, no loan|Relocation UB|Exhibition")) {
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(.*)Missing(.*)|(.*)Removed(.*)|(.*)Not available(.*)|(.*)Cancelled(.*)|(.*)On Repair(.*)|(.*)Binding(.*)|(.*)Archive copy, no loan(.*)|(.*)Relocation UB(.*)|(.*)Exhibition(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_RED;
                 }
                 break;
             case "HSB01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("^loan|^ausleihbar")) {
+                //if (isNullOrEmpty(dueDate) && loanState.matches("^loan|^ausleihbar")) {
+                  if (isNullOrEmpty(dueDate) && loanState.matches("loan(.*)|ausleihbar(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                  //} else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                  } else if (!isNullOrEmpty(dueDate) || loanState.matches("(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_RED;
                 }
                 break;
             case "SBT01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("prestito")) {
+                //if (isNullOrEmpty(dueDate) && loanState.matches("prestito")) {
+                if (isNullOrEmpty(dueDate) && loanState.matches("(.*)prestito(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                //} else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_RED;
                 }
                 break;
             case "ILU01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("heimausleihe")) {
+                //if ((isNullOrEmpty(dueDate) || dueDate.matches("On Shelf")) && loanState.matches("heimausleihe")) {
+                if ((isNullOrEmpty(dueDate) || dueDate.matches("(.*)On Shelf(.*)")) && loanState.matches("(.*)heimausleihe(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                //} else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_RED;
                 }
                 break;
             case "EBI01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("^loan|^heimausleihe|days|Online")) {
+                //if (isNullOrEmpty(dueDate) && loanState.matches("^loan|^heimausleihe|days|Online")) {
+                if (isNullOrEmpty(dueDate) && loanState.matches("loan(.*)|heimausleihe(.*)|(.*)days(.*)|(.*)Online(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                //} else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_RED;
                 }
                 break;
             case "SGB01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("ausleihbar")) {
+                //if (isNullOrEmpty(dueDate) && loanState.matches("ausleihbar")) {
+                if (isNullOrEmpty(dueDate) && loanState.matches("(.*)ausleihbar(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                //} else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_RED;
                 }
                 break;
             case "BGR01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("ausleihbar|kurzausleihe|ma ausleihbar|ma kurzausleihe|fh ausleihbar|fh ausleihbar 1|fh ausleihbar 2|fh kurzausleihe|fh kurzausleihe 1|fh kurzausleihe 2")) {
+                //if (isNullOrEmpty(dueDate) && loanState.matches("ausleihbar|kurzausleihe|ma ausleihbar|ma kurzausleihe|fh ausleihbar|fh ausleihbar 1|fh ausleihbar 2|fh kurzausleihe|fh kurzausleihe 1|fh kurzausleihe 2")) {
+                if (isNullOrEmpty(dueDate) && loanState.matches("(.*)ausleihbar(.*)|(.*)kurzausleihe(.*)|(.*)ma ausleihbar(.*)|(.*)ma kurzausleihe(.*)|(.*)fh ausleihbar(.*)|(.*)fh ausleihbar 1(.*)|(.*)fh ausleihbar 2(.*)|(.*)fh kurzausleihe(.*)|(.*)fh kurzausleihe 1(.*)|(.*)fh kurzausleihe 2(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                //} else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_RED;
                 }
                 break;
             case "ABN01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("4 Wochen|1 Monat|14 Tage")) {
+                //if (isNullOrEmpty(dueDate) && loanState.matches("4 Wochen|1 Monat|14 Tage")) {
+                if (isNullOrEmpty(dueDate) && loanState.matches("(.*)4 Wochen(.*)|(.*)1 Monat(.*)|(.*)14 Tage(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                //} else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = this.AVAILABILITY_STATE_RED;
                 }
                 break;
