@@ -23,12 +23,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.AbstractMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by Project SwissBib, www.swissbib.org.

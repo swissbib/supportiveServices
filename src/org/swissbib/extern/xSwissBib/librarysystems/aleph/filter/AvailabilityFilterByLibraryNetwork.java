@@ -109,7 +109,6 @@ public class AvailabilityFilterByLibraryNetwork extends AlephStreamFilter{
                         this.circItem.setDueDate(reader.getElementText());
                         toParse = true;
                     } else if (this.rootCircStatus && name.equalsIgnoreCase("sub-library") && this.circItem != null) {
-
                         this.circItem.setSublibrary(reader.getElementText());
                         toParse = true;
                     }
