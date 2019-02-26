@@ -4,12 +4,10 @@ import org.apache.log4j.Logger;
 import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateItem;
 import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateResponse;
 import org.swissbib.extern.xSwissBib.services.circulation.responsemodel.Institution;
-import org.swissbib.extern.xSwissBib.services.common.XServiceException;
 
-import javax.xml.stream.StreamFilter;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,6 +104,9 @@ public class AvailabilityFilterByLibraryNetwork extends AlephStreamFilter{
                         toParse = true;
                     } else if (this.rootCircStatus && name.equalsIgnoreCase("loan-status") && this.circItem != null) {
                         this.circItem.setLoanState(reader.getElementText());
+                        toParse = true;
+                    } else if (this.rootCircStatus && name.equalsIgnoreCase("due-date") && this.circItem != null) {
+                        this.circItem.setDueDate(reader.getElementText());
                         toParse = true;
                     } else if (this.rootCircStatus && name.equalsIgnoreCase("sub-library") && this.circItem != null) {
 

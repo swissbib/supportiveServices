@@ -1,11 +1,9 @@
 package org.swissbib.extern.xSwissBib.librarysystems;
 
+import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateResponse;
 import org.swissbib.extern.xSwissBib.services.circulation.responsemodel.Institution;
 import org.swissbib.extern.xSwissBib.services.common.LibraryProperties;
 import org.swissbib.extern.xSwissBib.services.common.XServiceException;
-import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateResponse;
-
-import java.util.HashMap;
 
 /**
  * Created by Project SwissBib, www.swissbib.org.
@@ -97,6 +95,8 @@ public abstract class LibrarySystem {
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
+
+    public abstract CirculationStateResponse requestCircultation(int type, String idls) throws XServiceException;
 
     public abstract CirculationStateResponse requestCircultation(int type) throws XServiceException;
 

@@ -79,6 +79,8 @@ public class AvailabilityRequestByLibraryNetwork extends HttpServlet{
                 out.println(jsonResonse.toJSONString());
 
                 if (circResponse.hasError()) {
+                    availLog.error("Internal Server Error:\\nidls=" + idls + "\\nsysNr=" + sysnumber +
+                            "\\n\\nError message:\\n" +circResponse.getErrorMessage() );
                     httpServletResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
                 }
             } else {

@@ -94,7 +94,7 @@ public class CirculationStateService {
         librarySystem.setProxyServer(this.proxyServer);
         librarySystem.setInstitution(mapInstitutions.get(lP.getIdsystem()));
 
-        return librarySystem.requestCircultation(LibrarySystem.AVAILABILITY_REQUEST_BY_LIBRARYCODE);
+        return librarySystem.requestCircultation(LibrarySystem.AVAILABILITY_REQUEST_BY_LIBRARYCODE, idls);
     }
 
     public CirculationStateService (HashMap<String,LibraryProperties> libraryProperties,
