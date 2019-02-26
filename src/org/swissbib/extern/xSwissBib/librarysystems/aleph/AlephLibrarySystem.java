@@ -283,7 +283,7 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
                 break;
             case "EBI01":
                 //if (isNullOrEmpty(dueDate) && loanState.matches("^loan|^heimausleihe|days|Online")) {
-                if (isNullOrEmpty(dueDate) && loanState.matches("loan(.*)|heimausleihe(.*)|(.*)days(.*)|(.*)Online(.*)")) {
+                if (isNullOrEmpty(dueDate) && loanState.matches("loan(.*)|heimausleihe(.*)|(.*)days(.*)|(.*)Online(.*)|Ausleihe(.*)|no loan(.*)|reading room only(.*)")) {
                     availabilityState = AVAILABILITY_STATE_GREEN;
                 //} else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
                 } else if (!isNullOrEmpty(dueDate) || loanState.matches("(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
