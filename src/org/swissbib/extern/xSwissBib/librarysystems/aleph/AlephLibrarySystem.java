@@ -274,7 +274,7 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
                 }
                 break;
             case "EBI01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)loan(.*)|heimausleihe(.*)|(.*)days(.*)|(.*)Online(.*)")) {
+                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)loan(.*)|heimausleihe(.*)|(.*)days(.*)|(.*)Online(.*)|Ausleihe(.*)|no loan(.*)|reading room only(.*)")) {
                     availabilityState = AVAILABILITY_STATE_GREEN;
                 } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = AVAILABILITY_STATE_RED;

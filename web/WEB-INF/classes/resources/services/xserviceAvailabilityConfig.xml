@@ -163,7 +163,7 @@
     <institution name="EBI01">
         <lendable>
             <mapField>getLoanState</mapField>
-            <mapValues>^loan##^heimausleihe##days</mapValues>
+            <mapValues>^loan##^heimausleihe##days##^Ausleihe</mapValues>
             <additionalFields conjunction="or">
                 <due-date>On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
                 <due-hour>notempty</due-hour>
@@ -182,6 +182,10 @@
             <mapField>loan-status</mapField>
             <mapValues/>
         </lookOnSite>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>no loan##reading room only</mapValues>
+        </use-on-site>
     </institution>
 
 
