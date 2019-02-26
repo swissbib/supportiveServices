@@ -41,38 +41,47 @@ public class ImageTransformer extends HttpServlet {
     //Test um ein Adam-Bild abzurufen
     //dies noch mit den sourcen auf chbtptst, die nicht mehr den hier abgeänderten für posters entsprechen.
     //http://chbtptst.oclcpica.org/TouchPoint/ImageTransformer?imagePath=http://www.idsluzern.ch/images/sosa/01/710.JPG&scale=1.0
-    private String sPostersURL="http://ccsa.admin.ch/cgi-bin/hi-res/get_image.cgi?x=800&y=500&res=2&width=20&height=1000&filename=/data/dbadmin/htdocs/hi-res/images/sid/%s.sid";
+    //private String sPostersURL="http://ccsa.admin.ch/cgi-bin/hi-res/get_image.cgi?x=800&y=500&res=2&width=20&height=1000&filename=/data/dbadmin/htdocs/hi-res/images/sid/%s.sid";
     private final static Logger transformerLog = Logger.getLogger(ImageTransformer.class);
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        boolean bPosters = false;
+        //boolean bPosters = false;
 
-        transformerLog.debug("start of processing transformer request");
+        transformerLog.debug(String.format("start of processing transformer request: %s?%s",request.getRequestURL(), request.getQueryString()));
 
         String urlToImage = request.getParameter("imagePath");
 
-        if (request.getParameter("posterImage") != null) {
+//        if (request.getParameter("posterImage") != null) {
+//
+//            bPosters = true;
+//
+//            String tempArray[] = urlToImage.split("\\.");
+//
+//            if (tempArray.length == 2) {
+//                urlToImage = String.format(sPostersURL,tempArray[0]);
+//                //System.out.println(urlToImage);
+//            } else {
+//                urlToImage = sPostersURL;
+//            }
+//        }
+//        else {
+//            String escapedImagePath = request.getParameter("escaped");
+//            if (Boolean.valueOf(escapedImagePath)) {
+//                Pattern replacePattern = Pattern.compile("ESCAPED");
+//                Matcher m = replacePattern.matcher(urlToImage);
+//                urlToImage = m.replaceAll("&");
+//            }
+//        }
 
-            bPosters = true;
 
-            String tempArray[] = urlToImage.split("\\.");
-
-            if (tempArray.length == 2) {
-                urlToImage = String.format(sPostersURL,tempArray[0]);
-                //System.out.println(urlToImage);
-            } else {
-                urlToImage = sPostersURL;
-            }
+        String escapedImagePath = request.getParameter("escaped");
+        if (Boolean.valueOf(escapedImagePath)) {
+            Pattern replacePattern = Pattern.compile("ESCAPED");
+            Matcher m = replacePattern.matcher(urlToImage);
+            urlToImage = m.replaceAll("&");
         }
-        else {
-            String escapedImagePath = request.getParameter("escaped");
-            if (Boolean.valueOf(escapedImagePath)) {
-                Pattern replacePattern = Pattern.compile("ESCAPED");
-                Matcher m = replacePattern.matcher(urlToImage);
-                urlToImage = m.replaceAll("&");
-            }
-        }
+
 
 
         //System.out.println("imagePath: " + urlToImage);
@@ -80,14 +89,14 @@ public class ImageTransformer extends HttpServlet {
 
 
             double scale = 0.2;
-            if (!bPosters){
+            //if (!bPosters){
                 try {
                     scale = Double.valueOf(request.getParameter("scale"));
                 } catch (Exception numberExcep)  {
                     scale = 0.2;
-                    numberExcep.printStackTrace();
+                    //numberExcep.printStackTrace();
                 }
-            }
+            //}
             //we need a quick solution to suppress delivery of large pictures because of
             //law restrictions
             boolean allowedCover = false;
@@ -95,7 +104,7 @@ public class ImageTransformer extends HttpServlet {
                 if (aC.urlRegEx.matcher(urlToImage).find()) {
                     allowedCover = true;
                     try {
-                        scale = Double.valueOf(aC.scale);
+                        scale = scale != 0.2  && scale <= 1.0 ? scale : Double.valueOf(aC.scale);
 
                     } catch (Exception ex) {
                         transformerLog.error("error using scale from white list", ex);
@@ -108,7 +117,7 @@ public class ImageTransformer extends HttpServlet {
             scale = allowedCover || scale <= 0.2 ? scale : 0.2;
             //urlToImage = urlToImage + ".jpg";
 
-            transformerLog.debug("got request: " + urlToImage);
+            transformerLog.debug("url to image going to be fetched by transformer: " + urlToImage);
 
             InputStream is = performRequest(urlToImage);
 
@@ -118,36 +127,35 @@ public class ImageTransformer extends HttpServlet {
             //GIFImageReader reader = (GIFImageReader)readers.next();
             //BufferedImage bufI = reader.read();
 
-            BufferedImage bufI = ImageIO.read(is);
-            //String [] s = ImageIO.getReaderFormatNames();
+            if (is == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
 
-            int width =   (int)(bufI.getWidth() * scale );
-            int height = (int)(bufI.getHeight() * scale);
+            } else {
 
-            Image img =  bufI.getScaledInstance(width,height,BufferedImage.TYPE_INT_ARGB);
-            BufferedImage newImg = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+                BufferedImage bufI = ImageIO.read(is);
+                //String [] s = ImageIO.getReaderFormatNames();
 
-            Graphics g = newImg.getGraphics();
-            g.drawImage(img, 0, 0, null);
-            g.dispose();
+                int width = (int) (bufI.getWidth() * scale);
+                int height = (int) (bufI.getHeight() * scale);
 
-            response.setContentType("image/jpeg");
+                Image img = bufI.getScaledInstance(width, height, BufferedImage.TYPE_INT_ARGB);
+                BufferedImage newImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-            ImageIO.write(newImg,"jpeg",response.getOutputStream());
-            //ImageIO.write(newImg,"jpeg",new File("/home/swissbib/newImage.jpg"));
+                Graphics g = newImg.getGraphics();
+                g.drawImage(img, 0, 0, null);
+                g.dispose();
 
-        } catch (MalformedURLException urlEx) {
-            transformerLog.debug(urlEx);
-            urlEx.printStackTrace();
-        } catch (IOException ioExc) {
-            transformerLog.debug(ioExc);
-            ioExc.printStackTrace();
+                response.setContentType("image/jpeg");
+
+                ImageIO.write(newImg, "jpeg", response.getOutputStream());
+            }
+
         } catch (Exception ex) {
             transformerLog.debug(ex);
-            ex.printStackTrace();
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (Throwable thr) {
             transformerLog.debug(thr);
-            thr.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
     }
