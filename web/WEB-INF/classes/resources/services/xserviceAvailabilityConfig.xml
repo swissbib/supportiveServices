@@ -153,6 +153,10 @@
             <mapField>getLoanState</mapField>
             <mapValues>missing##removed##vermisst</mapValues>
         </itemlost>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>Benutzung an Ort</mapValues>
+        </use-on-site>
         <lookOnSite>
             <mapField>loan-status</mapField>
             <mapValues/>
@@ -184,8 +188,12 @@
         </lookOnSite>
         <use-on-site>
             <mapField>getLoanState</mapField>
-            <mapValues>no loan##reading room only</mapValues>
+            <mapValues>no loan##reading room only##Benutzung im Lesesaal</mapValues>
         </use-on-site>
+        <unavailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>keine Benutzung</mapValues>
+        </unavailable>
     </institution>
 
 
@@ -206,8 +214,20 @@
         </itemlost>
         <lookOnSite>
             <mapField>loan-status</mapField>
-            <mapValues/>
+            <mapValues>loanable on request</mapValues>
         </lookOnSite>
+        <onlineAvailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>hidden</mapValues>
+        </onlineAvailable>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>library use</mapValues>
+        </use-on-site>
+        <unavailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>no loan</mapValues>
+        </unavailable>
     </institution>
 
     <institution name="BGR01">

@@ -246,7 +246,7 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
 
         switch (idls) {
             case "DSV01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)Loan|short loan \\(14 days\\)|(.*)Fernleihe(.*)|short loan \\(7 days\\)|short loan \\(3 days\\)|short loan \\(1 day\\)|one day loan|(.*)Reading Room(.*)|(.*)Use on-site(.*)|(.*)Special Reading Room(.*)|(.*)Online(.*)|(.*)Photocopy(.*)")) {
+                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)Loan|short loan(.*)|(.*)Fernleihe(.*)|one day loan|(.*)Reading Room(.*)|(.*)Use on-site(.*)|(.*)Special Reading Room(.*)|(.*)Online(.*)|(.*)Photocopy(.*)")) {
                     availabilityState = AVAILABILITY_STATE_GREEN;
                 } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)Missing(.*)|(.*)Removed(.*)|(.*)Not available(.*)|(.*)Cancelled(.*)|(.*)On Repair(.*)|(.*)Binding(.*)|(.*)Archive copy, no loan(.*)|(.*)Relocation UB(.*)|(.*)Exhibition(.*)")) {
                     availabilityState = AVAILABILITY_STATE_RED;
@@ -267,23 +267,23 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
                 }
                 break;
             case "ILU01":
-                if ((isNullOrEmpty(dueDate) || dueDate.matches("(?i)(.*)On Shelf(.*)")) && loanState.matches("(.*)heimausleihe(.*)")) {
+                if ((isNullOrEmpty(dueDate) || dueDate.matches("(?i)(.*)On Shelf(.*)")) && loanState.matches("(.*)heimausleihe(.*)|Benutzung an Ort(.*)")) {
                     availabilityState = AVAILABILITY_STATE_GREEN;
                 } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
             case "EBI01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)loan(.*)|heimausleihe(.*)|(.*)days(.*)|(.*)Online(.*)|Ausleihe(.*)|no loan(.*)|reading room only(.*)")) {
+                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)loan(.*)|heimausleihe(.*)|(.*)days(.*)|(.*)Online(.*)|Ausleihe(.*)|no loan(.*)|reading room only(.*)|Benutzung im Lesesaal(.*)")) {
                     availabilityState = AVAILABILITY_STATE_GREEN;
                 } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
             case "SGB01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)(.*)ausleihbar(.*)")) {
+                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)(.*)ausleihbar(.*)|hidden|library use(.*)|loanable on request")) {
                     availabilityState = AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)|no loan(.*)")) {
                     availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
