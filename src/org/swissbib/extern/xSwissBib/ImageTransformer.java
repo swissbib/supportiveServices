@@ -104,7 +104,7 @@ public class ImageTransformer extends HttpServlet {
                 if (aC.urlRegEx.matcher(urlToImage).find()) {
                     allowedCover = true;
                     try {
-                        scale = scale != 0.2  && scale <= 1.0 ? scale : Double.valueOf(aC.scale);
+                        scale = scale >= 0.1  && scale <= 1.0 ? scale : Double.valueOf(aC.scale);
 
                     } catch (Exception ex) {
                         transformerLog.error("error using scale from white list", ex);
