@@ -101,7 +101,7 @@
     <institution name="HSB01">
         <lendable>
             <mapField>getLoanState</mapField>
-            <mapValues>^loan##^ausleihbar</mapValues>
+            <mapValues>^loan##^ausleihbar##^Available to order</mapValues>
             <additionalFields conjunction="or">
                 <due-date>notempty</due-date>
                 <due-hour>notempty</due-hour>
@@ -114,8 +114,20 @@
         </itemlost>
         <lookOnSite>
             <mapField>loan-status</mapField>
-            <mapValues/>
+            <mapValues>loanable on request</mapValues>
         </lookOnSite>
+        <onlineAvailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>hidden</mapValues>
+        </onlineAvailable>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>library use</mapValues>
+        </use-on-site>
+        <unavailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>no loan</mapValues>
+        </unavailable>
     </institution>
 
 
@@ -161,6 +173,10 @@
             <mapField>loan-status</mapField>
             <mapValues/>
         </lookOnSite>
+        <onlineAvailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>Online</mapValues>
+        </onlineAvailable>
     </institution>
 
 
@@ -194,6 +210,10 @@
             <mapField>getLoanState</mapField>
             <mapValues>keine Benutzung##Discarded</mapValues>
         </unavailable>
+        <inProcess>
+            <mapField>getLoanState</mapField>
+            <mapValues>In process</mapValues>
+        </inProcess>
     </institution>
 
 
@@ -214,20 +234,8 @@
         </itemlost>
         <lookOnSite>
             <mapField>loan-status</mapField>
-            <mapValues>loanable on request</mapValues>
+            <mapValues/>
         </lookOnSite>
-        <onlineAvailable>
-            <mapField>getLoanState</mapField>
-            <mapValues>hidden</mapValues>
-        </onlineAvailable>
-        <use-on-site>
-            <mapField>getLoanState</mapField>
-            <mapValues>library use</mapValues>
-        </use-on-site>
-        <unavailable>
-            <mapField>getLoanState</mapField>
-            <mapValues>no loan</mapValues>
-        </unavailable>
     </institution>
 
     <institution name="BGR01">

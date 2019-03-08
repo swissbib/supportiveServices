@@ -253,9 +253,9 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
                 }
                 break;
             case "HSB01":
-                  if (isNullOrEmpty(dueDate) && loanState.matches("(?i)loan(.*)|ausleihbar(.*)")) {
+                  if (isNullOrEmpty(dueDate) && loanState.matches("(?i)loan(.*)|ausleihbar(.*)|Available to order(.*)|hidden|library use(.*)|loanable on request")) {
                     availabilityState = AVAILABILITY_STATE_GREEN;
-                  } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
+                  } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)|no loan(.*)")) {
                     availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
@@ -267,7 +267,7 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
                 }
                 break;
             case "ILU01":
-                if ((isNullOrEmpty(dueDate) || dueDate.matches("(?i)(.*)On Shelf(.*)")) && loanState.matches("(?i)(.*)heimausleihe(.*)|Benutzung an Ort(.*)")) {
+                if ((isNullOrEmpty(dueDate) || dueDate.matches("(?i)(.*)On Shelf(.*)")) && loanState.matches("(?i)(.*)heimausleihe(.*)|Benutzung an Ort(.*)|Online(.*)")) {
                     availabilityState = AVAILABILITY_STATE_GREEN;
                 } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = AVAILABILITY_STATE_RED;
@@ -281,9 +281,9 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
                 }
                 break;
             case "SGB01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)(.*)ausleihbar(.*)|hidden|library use(.*)|loanable on request")) {
+                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)(.*)ausleihbar(.*)")) {
                     availabilityState = AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)|no loan(.*)")) {
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
