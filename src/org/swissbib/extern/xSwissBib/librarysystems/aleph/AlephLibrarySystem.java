@@ -281,21 +281,21 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
                 }
                 break;
             case "SGB01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)(.*)ausleihbar(.*)")) {
+                if ((isNullOrEmpty(dueDate) || dueDate.matches("(?i)(.*)On Shelf(.*)")) && loanState.matches("(?i)(.*)ausleihbar(.*)|Benutzung an Ort(.*)|Benutzg. an Ort(.*)|Nur Lesesaal-Ausleihe(.*)|Online(.*)")) {
                     availabilityState = AVAILABILITY_STATE_GREEN;
                 } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
             case "BGR01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)(.*)ausleihbar(.*)|(.*)kurzausleihe(.*)|(.*)ma ausleihbar(.*)|(.*)ma kurzausleihe(.*)|(.*)fh ausleihbar(.*)|(.*)fh ausleihbar 1(.*)|(.*)fh ausleihbar 2(.*)|(.*)fh kurzausleihe(.*)|(.*)fh kurzausleihe 1(.*)|(.*)fh kurzausleihe 2(.*)")) {
+                if ((isNullOrEmpty(dueDate) || dueDate.matches("(?i)(.*)On Shelf(.*)")) && loanState.matches("(?i)(.*)ausleihbar(.*)|(.*)kurzausleihe(.*)|(.*)ma ausleihbar(.*)|(.*)ma kurzausleihe(.*)|(.*)fh ausleihbar(.*)|(.*)fh ausleihbar 1(.*)|(.*)fh ausleihbar 2(.*)|(.*)fh kurzausleihe(.*)|(.*)fh kurzausleihe 1(.*)|(.*)fh kurzausleihe 2(.*)|Benutzung an Ort(.*)|(.*)Online(.*)")) {
                     availabilityState = AVAILABILITY_STATE_GREEN;
                 } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
             case "ABN01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)(.*)4 Wochen(.*)|(.*)1 Monat(.*)|(.*)14 Tage(.*)")) {
+                if ((isNullOrEmpty(dueDate) || dueDate.matches("(?i)(.*)On Shelf(.*)")) && loanState.matches("(?i)(.*)4 Wochen(.*)|(.*)1 Monat(.*)|(.*)14 Tage(.*)|Benutzung Sonderlesesaal(.*)|Benutzung an Ort(.*)|Benutzung Lesesaal(.*)|Online(.*)")) {
                     availabilityState = AVAILABILITY_STATE_GREEN;
                 } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
                     availabilityState = AVAILABILITY_STATE_RED;

@@ -128,6 +128,10 @@
             <mapField>getLoanState</mapField>
             <mapValues>no loan</mapValues>
         </unavailable>
+        <onOrder>
+            <mapField>getLoanState</mapField>
+            <mapValues>expected</mapValues>
+        </onOrder>
     </institution>
 
 
@@ -232,6 +236,14 @@
             <mapField>getLoanState</mapField>
             <mapValues>missing##removed##vermisst</mapValues>
         </itemlost>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>Benutzung an Ort##Benutzg. an Ort##Nur Lesesaal-Ausleihe</mapValues>
+        </use-on-site>
+        <onlineAvailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>Online</mapValues>
+        </onlineAvailable>
         <lookOnSite>
             <mapField>loan-status</mapField>
             <mapValues/>
@@ -252,6 +264,14 @@
             <mapField>getLoanState</mapField>
             <mapValues>missing##removed##vermisst</mapValues>
         </itemlost>
+        <onlineAvailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>Online</mapValues>
+        </onlineAvailable>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>Benutzung an Ort##Keine Ausleihe</mapValues>
+        </use-on-site>
         <lookOnSite>
             <mapField>loan-status</mapField>
             <mapValues/>
@@ -272,6 +292,14 @@
             <mapField>getLoanState</mapField>
             <mapValues>missing##removed##vermisst</mapValues>
         </itemlost>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>Benutzung Sonderlesesaal##Benutzung an Ort##Benutzung Lesesaal</mapValues>
+        </use-on-site>
+        <onlineAvailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>Online</mapValues>
+        </onlineAvailable>
         <lookOnSite>
             <mapField>loan-status</mapField>
             <mapValues/>
