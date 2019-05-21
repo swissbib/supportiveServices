@@ -89,6 +89,7 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
             xServerResponse = this.doAlephXRequest(alephXRequest);
 
             //ToDo better check of response using this op-code -> it seems Aleph knows a lot of errors...
+            checkForErrors(xServerResponse, alephXRequest);
             this.requestURL = alephXRequest;
             //this.checkResponseFromSystem(xServerResponse);
 
@@ -132,6 +133,15 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
         if (type == LibrarySystem.AVAILABILITY_REQUEST_BY_BARCODE) response.formatItemsResponse(this.getInstitution(),this.getLanguage());
 
         return response;
+    }
+
+    private void checkForErrors(String xmlAlephResponse, String requestURL) {
+        if (xmlAlephResponse.contains("<error>")) {
+            int startIndex = xmlAlephResponse.indexOf("<error>") + "<error>".length();
+            int endIndex = xmlAlephResponse.indexOf("</error>");
+            String errorMsg = xmlAlephResponse.substring(startIndex, endIndex);
+            availLog.error("Error '" + errorMsg + "' with URL " + requestURL);
+        }
     }
 
     public void checkResponseFromSystem(String xServerResponse) throws XServiceException {
