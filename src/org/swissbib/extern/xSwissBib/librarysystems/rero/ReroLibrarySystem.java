@@ -57,7 +57,10 @@ public class ReroLibrarySystem extends LibrarySystem implements XMLStreamConstan
 
         for(String barcode : this.getBarcode()) {
             // 1. do rero call
-            String url = "https://services.test.rero.ch/item/" + barcode + "/availability";
+            String url = getLibraryProperties().getUrlsystem() +
+                    String.format(getLibraryProperties().getCircQueryParameter(),XServiceUtilities.getStringArrayAsString(getDocItems()))
+                    + getLibraryProperties().getAnonymusUser();
+
 
             ReroAvailability responseJson;
             try {
