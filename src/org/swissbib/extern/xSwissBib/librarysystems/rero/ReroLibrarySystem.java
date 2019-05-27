@@ -59,8 +59,7 @@ public class ReroLibrarySystem extends LibrarySystem implements XMLStreamConstan
             // 1. do rero call
             String url = getLibraryProperties().getUrlsystem() +
                     String.format(getLibraryProperties().getCircQueryParameter(),XServiceUtilities.getStringArrayAsString(getDocItems()))
-                    + getLibraryProperties().getAnonymusUser();
-
+                    + getLibraryProperties().getAnonymusUser() + "item/" + barcode + "/availability";
 
             ReroAvailability responseJson;
             try {
