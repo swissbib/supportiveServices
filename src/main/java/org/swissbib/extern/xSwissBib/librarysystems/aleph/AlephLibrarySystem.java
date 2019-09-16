@@ -89,6 +89,7 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
             xServerResponse = this.doAlephXRequest(alephXRequest);
 
             //ToDo better check of response using this op-code -> it seems Aleph knows a lot of errors...
+            checkForErrors(xServerResponse, alephXRequest);
             this.requestURL = alephXRequest;
             //this.checkResponseFromSystem(xServerResponse);
 
@@ -117,13 +118,7 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
             for (org.swissbib.extern.xSwissBib.services.circulation.CirculationStateItem item : items) {
                 libCode = item.getSublibrary();
                 int availabilityState = getAvailabilityState(item, idls);
-                libBestAvail.put(libCode, availabilityState);
-                /*
-                if (item.getLoanState().equals("Loan") && item.getDueDate() == null){
-                    libCode = item.getSublibrary();
-                    libBestAvail.put(libCode, this.AVAILABILITY_STATE_GREEN);
-                }
-                */
+                if (libBestAvail.get(libCode) == null || libBestAvail.get(libCode) > availabilityState) libBestAvail.put(libCode, availabilityState);
             }
 
             // create new response-items:
@@ -138,6 +133,15 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
         if (type == LibrarySystem.AVAILABILITY_REQUEST_BY_BARCODE) response.formatItemsResponse(this.getInstitution(),this.getLanguage());
 
         return response;
+    }
+
+    private void checkForErrors(String xmlAlephResponse, String requestURL) {
+        if (xmlAlephResponse.contains("<error>")) {
+            int startIndex = xmlAlephResponse.indexOf("<error>") + "<error>".length();
+            int endIndex = xmlAlephResponse.indexOf("</error>");
+            String errorMsg = xmlAlephResponse.substring(startIndex, endIndex);
+            availLog.error("Error '" + errorMsg + "' with URL " + requestURL);
+        }
     }
 
     public void checkResponseFromSystem(String xServerResponse) throws XServiceException {
@@ -245,72 +249,71 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
     private boolean isNullOrEmpty(String s) {return s == null || s.isEmpty();}
 
     private int getAvailabilityState(CirculationStateItem item, String idls) {
-        int availabilityState = this.AVAILABILITY_STATE_UNKNOWN;
+        int availabilityState = AVAILABILITY_STATE_UNKNOWN;
         String sublibrary = item.getSublibrary();
         String loanState = item.getLoanState();
         String dueDate = item.getDueDate();
 
         switch (idls) {
             case "DSV01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("^Loan$|^short loan \\(14 days\\)$|Fernleihe|^short loan \\(7 days\\)$|^short loan \\(3 days\\)$|^short loan \\(1 day\\)$|^one day loan$|Reading Room|Use on-site|Special Reading Room|Online|Photocopy")) {
-                    availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("Missing|Removed|Not available|Cancelled|On Repair|Binding|Archive copy, no loan|Relocation UB|Exhibition")) {
-                    availabilityState = this.AVAILABILITY_STATE_RED;
+                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)Loan|short loan(.*)|(.*)Fernleihe(.*)|one day loan|(.*)Reading Room(.*)|(.*)Use on-site(.*)|(.*)Special Reading Room(.*)|(.*)Online(.*)|(.*)Photocopy(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_GREEN;
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)Missing(.*)|(.*)Removed(.*)|(.*)Not available(.*)|(.*)Cancelled(.*)|(.*)On Repair(.*)|(.*)Binding(.*)|(.*)Archive copy, no loan(.*)|(.*)Relocation UB(.*)|(.*)Exhibition(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
             case "HSB01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("^loan|^ausleihbar")) {
-                    availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
-                    availabilityState = this.AVAILABILITY_STATE_RED;
+                  if (isNullOrEmpty(dueDate) && loanState.matches("(?i)loan(.*)|ausleihbar(.*)|Available to order(.*)|hidden|library use(.*)|loanable on request")) {
+                    availabilityState = AVAILABILITY_STATE_GREEN;
+                  } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)|no loan(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
             case "SBT01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("prestito")) {
-                    availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
-                    availabilityState = this.AVAILABILITY_STATE_RED;
+                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)(.*)prestito(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_GREEN;
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
             case "ILU01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("heimausleihe")) {
-                    availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
-                    availabilityState = this.AVAILABILITY_STATE_RED;
+                if ((isNullOrEmpty(dueDate) || dueDate.matches("(?i)(.*)On Shelf(.*)")) && loanState.matches("(?i)(.*)heimausleihe(.*)|Benutzung an Ort(.*)|Online(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_GREEN;
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
             case "EBI01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("^loan|^heimausleihe|days|Online")) {
-                    availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
-                    availabilityState = this.AVAILABILITY_STATE_RED;
+                if (isNullOrEmpty(dueDate) && loanState.matches("(?i)loan(.*)|heimausleihe(.*)|(.*)days(.*)|(.*)Online(.*)|Ausleihe(.*)|no loan(.*)|reading room only(.*)|Benutzung im Lesesaal(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_GREEN;
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
             case "SGB01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("ausleihbar")) {
-                    availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
-                    availabilityState = this.AVAILABILITY_STATE_RED;
+                if ((isNullOrEmpty(dueDate) || dueDate.matches("(?i)(.*)On Shelf(.*)")) && loanState.matches("(?i)(.*)ausleihbar(.*)|Benutzung an Ort(.*)|Benutzg. an Ort(.*)|Nur Lesesaal-Ausleihe(.*)|Online(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_GREEN;
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
             case "BGR01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("ausleihbar|kurzausleihe|ma ausleihbar|ma kurzausleihe|fh ausleihbar|fh ausleihbar 1|fh ausleihbar 2|fh kurzausleihe|fh kurzausleihe 1|fh kurzausleihe 2")) {
-                    availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
-                    availabilityState = this.AVAILABILITY_STATE_RED;
+                if ((isNullOrEmpty(dueDate) || dueDate.matches("(?i)(.*)On Shelf(.*)")) && loanState.matches("(?i)(.*)ausleihbar(.*)|(.*)kurzausleihe(.*)|(.*)ma ausleihbar(.*)|(.*)ma kurzausleihe(.*)|(.*)fh ausleihbar(.*)|(.*)fh ausleihbar 1(.*)|(.*)fh ausleihbar 2(.*)|(.*)fh kurzausleihe(.*)|(.*)fh kurzausleihe 1(.*)|(.*)fh kurzausleihe 2(.*)|Benutzung an Ort(.*)|(.*)Online(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_GREEN;
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
             case "ABN01":
-                if (isNullOrEmpty(dueDate) && loanState.matches("4 Wochen|1 Monat|14 Tage")) {
-                    availabilityState = this.AVAILABILITY_STATE_GREEN;
-                } else if (!isNullOrEmpty(dueDate) || loanState.matches("missing|removed|vermisst")) {
-                    availabilityState = this.AVAILABILITY_STATE_RED;
+                if ((isNullOrEmpty(dueDate) || dueDate.matches("(?i)(.*)On Shelf(.*)")) && loanState.matches("(?i)(.*)4 Wochen(.*)|(.*)1 Monat(.*)|(.*)14 Tage(.*)|Benutzung Sonderlesesaal(.*)|Benutzung an Ort(.*)|Benutzung Lesesaal(.*)|Online(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_GREEN;
+                } else if (!isNullOrEmpty(dueDate) || loanState.matches("(?i)(.*)missing(.*)|(.*)removed(.*)|(.*)vermisst(.*)")) {
+                    availabilityState = AVAILABILITY_STATE_RED;
                 }
                 break;
             default:
-                availabilityState = this.AVAILABILITY_STATE_ERROR;
+                availabilityState = AVAILABILITY_STATE_ERROR;
         }
-
         return availabilityState;
     }
 

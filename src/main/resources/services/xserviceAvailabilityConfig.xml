@@ -20,7 +20,7 @@
             <additionalFields conjunction="or">
 
                 <!-- any other values in due-date are splitted with ## Pattern and use the languages! -->
-                <due-date>On Hold\#\#Requested{de!bestellt und reserviert#en!bestellt und reserviert#fr!bestellt und reserviert#it!bestellt und reserviert}##On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##REQUESTED{de!on reserve#en!on reserve#fr!on reserve#it!on reserve}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
+                <due-date>On Hold\#\#Requested{de!on hold#en!on hold#fr!on hold#it!on hold}##On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##REQUESTED{de!on reserve#en!on reserve#fr!on reserve#it!on reserve}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
 
                 <due-hour/>
                 <no-requests/>
@@ -101,7 +101,7 @@
     <institution name="HSB01">
         <lendable>
             <mapField>getLoanState</mapField>
-            <mapValues>^loan##^ausleihbar</mapValues>
+            <mapValues>^loan##^ausleihbar##^Available to order</mapValues>
             <additionalFields conjunction="or">
                 <due-date>notempty</due-date>
                 <due-hour>notempty</due-hour>
@@ -114,8 +114,24 @@
         </itemlost>
         <lookOnSite>
             <mapField>loan-status</mapField>
-            <mapValues/>
+            <mapValues>loanable on request</mapValues>
         </lookOnSite>
+        <onlineAvailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>hidden</mapValues>
+        </onlineAvailable>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>library use</mapValues>
+        </use-on-site>
+        <unavailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>no loan</mapValues>
+        </unavailable>
+        <onOrder>
+            <mapField>getLoanState</mapField>
+            <mapValues>expected</mapValues>
+        </onOrder>
     </institution>
 
 
@@ -153,17 +169,25 @@
             <mapField>getLoanState</mapField>
             <mapValues>missing##removed##vermisst</mapValues>
         </itemlost>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>Benutzung an Ort</mapValues>
+        </use-on-site>
         <lookOnSite>
             <mapField>loan-status</mapField>
             <mapValues/>
         </lookOnSite>
+        <onlineAvailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>Online</mapValues>
+        </onlineAvailable>
     </institution>
 
 
     <institution name="EBI01">
         <lendable>
             <mapField>getLoanState</mapField>
-            <mapValues>^loan##^heimausleihe##days</mapValues>
+            <mapValues>^loan##^heimausleihe##days##^Ausleihe</mapValues>
             <additionalFields conjunction="or">
                 <due-date>On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
                 <due-hour>notempty</due-hour>
@@ -182,6 +206,18 @@
             <mapField>loan-status</mapField>
             <mapValues/>
         </lookOnSite>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>no loan##reading room only##Benutzung im Lesesaal</mapValues>
+        </use-on-site>
+        <unavailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>keine Benutzung##Discarded</mapValues>
+        </unavailable>
+        <inProcess>
+            <mapField>getLoanState</mapField>
+            <mapValues>In process</mapValues>
+        </inProcess>
     </institution>
 
 
@@ -200,6 +236,14 @@
             <mapField>getLoanState</mapField>
             <mapValues>missing##removed##vermisst</mapValues>
         </itemlost>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>Benutzung an Ort##Benutzg. an Ort##Nur Lesesaal-Ausleihe</mapValues>
+        </use-on-site>
+        <onlineAvailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>Online</mapValues>
+        </onlineAvailable>
         <lookOnSite>
             <mapField>loan-status</mapField>
             <mapValues/>
@@ -220,6 +264,14 @@
             <mapField>getLoanState</mapField>
             <mapValues>missing##removed##vermisst</mapValues>
         </itemlost>
+        <onlineAvailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>Online</mapValues>
+        </onlineAvailable>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>Benutzung an Ort##Keine Ausleihe</mapValues>
+        </use-on-site>
         <lookOnSite>
             <mapField>loan-status</mapField>
             <mapValues/>
@@ -240,6 +292,14 @@
             <mapField>getLoanState</mapField>
             <mapValues>missing##removed##vermisst</mapValues>
         </itemlost>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>Benutzung Sonderlesesaal##Benutzung an Ort##Benutzung Lesesaal</mapValues>
+        </use-on-site>
+        <onlineAvailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>Online</mapValues>
+        </onlineAvailable>
         <lookOnSite>
             <mapField>loan-status</mapField>
             <mapValues/>
