@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <library-mapping>
-	<library>
-		<idsystem>DSV01</idsystem>
+    <library>
+        <idsystem>DSV01</idsystem>
         <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
-		<urlsystem>http://aleph.unibas.ch/</urlsystem>
+        <urlsystem>http://aleph.unibas.ch/</urlsystem>
         <anonymusUser>true</anonymusUser>
         <circQueryParameter><![CDATA[X?op=circ-status&sys_no=%s&library=DSV01]]></circQueryParameter>
         <!--<circQueryParameter><![CDATA[X?op=circ-status&user_name=WWW-XTEST&user_password=www-xtest&sys_no=%s8&library=dsv01]]></circQueryParameter>-->
         <circresponsetype>org.swissbib.extern.xSwissBib.services.circulation.CirculationResponseFormatterDSV</circresponsetype>
         <useProxy>FALSE</useProxy>
-	</library>
+    </library>
 
     <library>
         <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
@@ -57,7 +57,7 @@
     <library>
         <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
         <idsystem>EBI01</idsystem>
-        <urlsystem>https://opac.nebis.ch/</urlsystem>
+        <urlsystem>http://opac.nebis.ch/</urlsystem>
         <anonymusUser>true</anonymusUser>
         <circQueryParameter><![CDATA[X?op=circ-status&sys_no=%s&library=EBI01]]></circQueryParameter>
         <circresponsetype>org.swissbib.extern.xSwissBib.services.circulation.CirculationResponseFormatterNEBIS</circresponsetype>
@@ -69,14 +69,13 @@
     <library>
         <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
         <idsystem>SGB01</idsystem>
-        <urlsystem>https://aleph.sg.ch/</urlsystem>
+        <urlsystem>http://aleph.sg.ch/</urlsystem>
         <anonymusUser>true</anonymusUser>
         <circQueryParameter><![CDATA[X?op=circ-status&sys_no=%s&library=sgb01]]></circQueryParameter>
         <circresponsetype>org.swissbib.extern.xSwissBib.services.circulation.CirculationResponseFormatterSGBN</circresponsetype>
         <useProxy>FALSE</useProxy>
     </library>
 
-        
     <library>
         <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
         <idsystem>BGR01</idsystem>
@@ -86,30 +85,7 @@
         <circresponsetype>org.swissbib.extern.xSwissBib.services.circulation.CirculationResponseFormatterBGR</circresponsetype>
         <useProxy>FALSE</useProxy>
     </library>
-    
-    <!--  
-    <library>
-        <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
-        <idsystem>BGR01</idsystem>
-        <urlsystem>http://aleph.gr.ch/</urlsystem>
-        <anonymusUser>true</anonymusUser>
-        <circQueryParameter><![CDATA[X?op=circ-status&sys_no=%s&library=BGR01]]></circQueryParameter>
-        <circresponsetype>org.swissbib.extern.xSwissBib.services.circulation.CirculationResponseFormatterBGR</circresponsetype>
-        <useProxy>FALSE</useProxy>
-    </library>
-   --> 
 
-    <!--
-    <library>
-        <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
-        <idsystem>ABN01</idsystem>
-        <urlsystem>http://aleph.ag.ch/</urlsystem>
-        <anonymusUser><![CDATA[&user_name=WWW-X&user_password=5001Aarau]]></anonymusUser>
-        <circQueryParameter><![CDATA[X?op=circ-status&sys_no=%s&library=ABN01]]></circQueryParameter>
-        <circresponsetype>org.swissbib.extern.xSwissBib.services.circulation.CirculationResponseFormatterABN</circresponsetype>
-        <useProxy>FALSE</useProxy>
-    </library>
-    -->
 
     <library>
         <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
@@ -121,6 +97,16 @@
         <useProxy>FALSE</useProxy>
     </library>
 
+
+    <library>
+        <systemtype>org.swissbib.extern.xSwissBib.librarysystems.rero.ReroLibrarySystem</systemtype>
+        <idsystem>RERO</idsystem>
+        <urlsystem>https://services.test.rero.ch/</urlsystem>
+        <anonymusUser>true</anonymusUser>
+        <circQueryParameter></circQueryParameter>
+        <circresponsetype>org.swissbib.extern.xSwissBib.services.circulation.CirculationResponseFormatterABN</circresponsetype>
+        <useProxy>FALSE</useProxy>
+    </library>
 
 
 </library-mapping>

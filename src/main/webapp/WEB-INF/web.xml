@@ -24,7 +24,7 @@
          <servlet-class>org.swissbib.extern.xSwissBib.AvailabilityRequest</servlet-class>
          <init-param>
              <param-name>librarysystems</param-name>
-             <param-value>WEB-INF/classes/resources/services/mapping.librarysystem.xml</param-value>
+             <param-value>WEB-INF/classes/services/mapping.librarysystem.xml</param-value>
              <!--<param-value>http://localhost:18080/xSwissBib/services/Circulation/getCirculationStatusRequest</param-value> -->
 		 </init-param>
              <!-- <init-param>
@@ -51,7 +51,7 @@
          <servlet-class>org.swissbib.extern.xSwissBib.AvailabilityRequestByLibraryNetwork</servlet-class>
          <init-param>
              <param-name>librarysystems</param-name>
-             <param-value>WEB-INF/classes/resources/services/mapping.librarysystem.xml</param-value>
+             <param-value>WEB-INF/classes/services/mapping.librarysystem.xml</param-value>
              </init-param>
          <init-param>
              <param-name>DEBUG</param-name>
