@@ -69,8 +69,6 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
     private final static int AVAILABILITY_STATE_GREEN = 0;
     private final static int AVAILABILITY_STATE_RED = 1;
     private final static int AVAILABILITY_STATE_UNKNOWN = 2;
-    private final static int AVAILABILITY_STATE_ERROR = 3;
-
     private final static Logger availLog = Logger.getLogger("swissbibavail");
 
     public CirculationStateResponse requestCircultation(int type) throws XServiceException {
@@ -312,7 +310,7 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
                 }
                 break;
             default:
-                availabilityState = AVAILABILITY_STATE_ERROR;
+                availabilityState = AVAILABILITY_STATE_UNKNOWN;
         }
         return availabilityState;
     }
