@@ -85,6 +85,7 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
 
         try {
             xServerResponse = this.doAlephXRequest(alephXRequest);
+            availLog.info("Response from ILS: " + xServerResponse);
 
             //ToDo better check of response using this op-code -> it seems Aleph knows a lot of errors...
             checkForErrors(xServerResponse, alephXRequest);
