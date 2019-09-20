@@ -117,7 +117,7 @@ public class AlephLibrarySystem extends LibrarySystem implements XMLStreamConsta
             for (org.swissbib.extern.xSwissBib.services.circulation.CirculationStateItem item : items) {
                 libCode = item.getSublibrary();
                 int availabilityState = getAvailabilityState(item, idls);
-                int previousState = libBestAvail.get(libCode);
+                Integer previousState = libBestAvail.get(libCode);
                 if (previousState == null ||
                     availabilityState == AVAILABILITY_STATE_GREEN ||
                     (availabilityState == AVAILABILITY_STATE_UNKNOWN && previousState == AVAILABILITY_STATE_RED)

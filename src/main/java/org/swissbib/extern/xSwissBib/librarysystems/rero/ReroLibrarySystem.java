@@ -93,9 +93,6 @@ public class ReroLibrarySystem extends LibrarySystem implements XMLStreamConstan
             } catch (MalformedURLException ex) {
                 availLog.warn("Please use correct url for request: [domain]/item/[barcode]/availability");
                 throw new XServiceException("Please use correct url for request: [domain]/item/[barcode]/availability");
-            } catch (IOException ex) {
-                availLog.warn("Please use correct url for request: [domain]/item/[barcode]/availability");
-                throw new XServiceException("Please use correct url for request: [domain]/item/[barcode]/availability");
             }
         }
 
