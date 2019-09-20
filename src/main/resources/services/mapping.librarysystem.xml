@@ -21,9 +21,6 @@
         <useProxy>FALSE</useProxy>
     </library>
 
-
-
-
     <library>
         <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
         <idsystem>SBT01</idsystem>
@@ -64,8 +61,6 @@
         <useProxy>FALSE</useProxy>
     </library>
 
-
-
     <library>
         <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
         <idsystem>SGB01</idsystem>
@@ -76,7 +71,6 @@
         <useProxy>FALSE</useProxy>
     </library>
 
-
     <library>
         <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
         <idsystem>BGR01</idsystem>
@@ -86,30 +80,6 @@
         <circresponsetype>org.swissbib.extern.xSwissBib.services.circulation.CirculationResponseFormatterBGR</circresponsetype>
         <useProxy>FALSE</useProxy>
     </library>
-
-    <!--
-    <library>
-        <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
-        <idsystem>BGR01</idsystem>
-        <urlsystem>http://aleph.gr.ch/</urlsystem>
-        <anonymusUser>true</anonymusUser>
-        <circQueryParameter><![CDATA[X?op=circ-status&sys_no=%s&library=BGR01]]></circQueryParameter>
-        <circresponsetype>org.swissbib.extern.xSwissBib.services.circulation.CirculationResponseFormatterBGR</circresponsetype>
-        <useProxy>FALSE</useProxy>
-    </library>
-   -->
-
-    <!--
-    <library>
-        <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
-        <idsystem>ABN01</idsystem>
-        <urlsystem>http://aleph.ag.ch/</urlsystem>
-        <anonymusUser><![CDATA[&user_name=WWW-X&user_password=5001Aarau]]></anonymusUser>
-        <circQueryParameter><![CDATA[X?op=circ-status&sys_no=%s&library=ABN01]]></circQueryParameter>
-        <circresponsetype>org.swissbib.extern.xSwissBib.services.circulation.CirculationResponseFormatterABN</circresponsetype>
-        <useProxy>FALSE</useProxy>
-    </library>
-    -->
 
     <library>
         <systemtype>org.swissbib.extern.xSwissBib.librarysystems.aleph.AlephLibrarySystem</systemtype>
