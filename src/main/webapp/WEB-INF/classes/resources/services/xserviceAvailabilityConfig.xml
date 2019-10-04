@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<codedefinitions>
+	    <institution name="DSV01">
+        <lendable>
+            <mapField>getLoanState</mapField>
+            <mapValues>^Loan$##^short loan \(14 days\)$##Fernleihe</mapValues>
+            <additionalFields conjunction="or">
+
+                <!-- any other values in due-date are splitted with ## Pattern and use the languages! -->
+                <due-date>On Hold\#\#Requested{de!on hold#en!on hold#fr!on hold#it!on hold}##On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##REQUESTED{de!on reserve#en!on reserve#fr!on reserve#it!on reserve}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
+
+                <due-hour/>
+                <no-requests/>
+            </additionalFields>
+        </lendable>
+        <lendableShort>
+            <mapField>getLoanState</mapField>
+            <mapValues>^short loan \(7 days\)$##^short loan \(3 days\)$##^short loan \(1 day\)$##^one day loan$</mapValues>
+            <additionalFields conjunction="or">
+
+                <!-- any other values in due-date are splitted with ## Pattern and use the languages! -->
+                <due-date>On Hold\#\#Requested{de!bestellt und reserviert#en!bestellt und reserviert#fr!bestellt und reserviert#it!bestellt und reserviert}##On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##REQUESTED{de!on reserve#en!on reserve#fr!on reserve#it!on reserve}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
+
+                <due-hour/>
+                <no-requests/>
+            </additionalFields>
+        </lendableShort>
+        <use-on-site>
+            <mapField>getLoanState</mapField>
+            <mapValues>Reading Room##Use on-site##Special Reading Room</mapValues>
+            <additionalFields conjunction="or">
+
+                <!-- any other values in due-date are splitted with ## Pattern and use the languages! -->
+                <due-date>On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##REQUESTED{de!on reserve#en!on reserve#fr!on reserve#it!on reserve}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
+
+                <due-hour/>
+                <no-requests/>
+            </additionalFields>
+        </use-on-site>
+        <libraryInfo>
+            <mapField>getLoanState</mapField>
+            <mapValues>See Library: Info</mapValues>
+            <additionalFields conjunction="or">
+
+                <!-- any other values in due-date are splitted with ## Pattern and use the languages! -->
+                <due-date>On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##REQUESTED{de!on reserve#en!on reserve#fr!on reserve#it!on reserve}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
+
+                <due-hour/>
+                <no-requests/>
+            </additionalFields>
+        </libraryInfo>
+        <unavailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>Missing##Removed##Not available##Cancelled##On Repair##Binding##Archive copy, no loan##Relocation UB</mapValues>
+        </unavailable>
+        <onlineAvailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>Online</mapValues>
+        </onlineAvailable>
+        <lookOnSite>
+            <mapField>loan-status</mapField>
+            <mapValues/>
+        </lookOnSite>
+        <inProcess>
+            <mapField>getLoanState</mapField>
+            <mapValues>In process</mapValues>
+            <additionalFields conjunction="or">
+
+                <!-- any other values in due-date are splitted with ## Pattern and use the languages! -->
+                <due-date>On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##REQUESTED{de!on reserve#en!on reserve#fr!on reserve#it!on reserve}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
+
+                <due-hour/>
+                <no-requests/>
+            </additionalFields>
+        </inProcess>
+        <onOrder>
+            <mapField>getLoanState</mapField>
+            <mapValues>On order##Not received##Claimed</mapValues>
+        </onOrder>
+        <semesterapparat>
+            <mapField>getLoanState</mapField>
+            <mapValues>Course Reading##Accessible in course reserve</mapValues>
+        </semesterapparat>
+        <exhibition>
+            <mapField>getLoanState</mapField>
+            <mapValues>Exhibition</mapValues>
+        </exhibition>
+        <substitute>
+			<mapField>getLoanState</mapField>
+			<mapValues>Substitute</mapValues>
+        </substitute>
+        <photocopy>
+            <mapField>getLoanState</mapField>
+            <mapValues>Photocopy</mapValues>
+        </photocopy>
+
+    </institution>
+
+
+    <institution name="HSB01">
+        <lendable>
+            <mapField>getLoanState</mapField>
+            <mapValues>^loan##^ausleihbar</mapValues>
+            <additionalFields conjunction="or">
+                <due-date>notempty</due-date>
+                <due-hour>notempty</due-hour>
+                <no-requests>notempty</no-requests>
+            </additionalFields>
+        </lendable>
+        <itemlost>
+            <mapField>getLoanState</mapField>
+            <mapValues>missing##removed##vermisst</mapValues>
+        </itemlost>
+        <lookOnSite>
+            <mapField>loan-status</mapField>
+            <mapValues/>
+        </lookOnSite>
+    </institution>
+
+
+    <institution name="SBT01">
+        <lendable>
+            <mapField>getLoanState</mapField>
+            <mapValues>prestito</mapValues>
+            <additionalFields conjunction="or">
+                <due-date>notempty</due-date>
+                <due-hour>notempty</due-hour>
+                <no-requests>notempty</no-requests>
+            </additionalFields>
+        </lendable>
+        <itemlost>
+            <mapField>getLoanState</mapField>
+            <mapValues>missing##removed##vermisst</mapValues>
+        </itemlost>
+        <lookOnSite>
+            <mapField>loan-status</mapField>
+            <mapValues/>
+        </lookOnSite>
+    </institution>
+
+    <institution name="ILU01">
+        <lendable>
+            <mapField>getLoanState</mapField>
+            <mapValues>heimausleihe</mapValues>
+            <additionalFields conjunction="or">
+                <due-date>notempty</due-date>
+                <due-hour>notempty</due-hour>
+                <no-requests>notempty</no-requests>
+            </additionalFields>
+        </lendable>
+        <itemlost>
+            <mapField>getLoanState</mapField>
+            <mapValues>missing##removed##vermisst</mapValues>
+        </itemlost>
+        <lookOnSite>
+            <mapField>loan-status</mapField>
+            <mapValues/>
+        </lookOnSite>
+    </institution>
+
+
+    <institution name="EBI01">
+        <lendable>
+            <mapField>getLoanState</mapField>
+            <mapValues>^loan##^heimausleihe##days</mapValues>
+            <additionalFields conjunction="or">
+                <due-date>On Hold{de!on hold#en!on hold#fr!on hold#it!on hold}##Claimed Returned{de!claimed returned#en!claimed returned#fr!claimed returned#it!claimed returned}##Lost{de!lost#en!lost#fr!lost#it!lost}</due-date>
+                <due-hour>notempty</due-hour>
+                <no-requests>notempty</no-requests>
+            </additionalFields>
+        </lendable>
+        <itemlost>
+            <mapField>getLoanState</mapField>
+            <mapValues>missing##removed##vermisst</mapValues>
+        </itemlost>
+        <onlineAvailable>
+            <mapField>getLoanState</mapField>
+            <mapValues>Online</mapValues>
+        </onlineAvailable>
+        <lookOnSite>
+            <mapField>loan-status</mapField>
+            <mapValues/>
+        </lookOnSite>
+    </institution>
+
+
+
+    <institution name="SGB01">
+        <lendable>
+            <mapField>getLoanState</mapField>
+            <mapValues>ausleihbar</mapValues>
+            <additionalFields conjunction="or">
+                <due-date>notempty</due-date>
+                <due-hour>notempty</due-hour>
+                <no-requests>notempty</no-requests>
+            </additionalFields>
+        </lendable>
+        <itemlost>
+            <mapField>getLoanState</mapField>
+            <mapValues>missing##removed##vermisst</mapValues>
+        </itemlost>
+        <lookOnSite>
+            <mapField>loan-status</mapField>
+            <mapValues/>
+        </lookOnSite>
+    </institution>
+
+    <institution name="BGR01">
+        <lendable>
+            <mapField>getLoanState</mapField>
+            <mapValues>ausleihbar##kurzausleihe##ma ausleihbar##ma kurzausleihe##fh ausleihbar##fh ausleihbar 1##fh ausleihbar 2##fh kurzausleihe##fh kurzausleihe 1##fh kurzausleihe 2</mapValues>
+            <additionalFields conjunction="or">
+                <due-date>notempty</due-date>
+                <due-hour>notempty</due-hour>
+                <no-requests>notempty</no-requests>
+            </additionalFields>
+        </lendable>
+        <itemlost>
+            <mapField>getLoanState</mapField>
+            <mapValues>missing##removed##vermisst</mapValues>
+        </itemlost>
+        <lookOnSite>
+            <mapField>loan-status</mapField>
+            <mapValues/>
+        </lookOnSite>
+    </institution>
+
+    <institution name="ABN01">
+        <lendable>
+            <mapField>getLoanState</mapField>
+            <mapValues>4 Wochen##1 Monat##14 Tage</mapValues>
+            <additionalFields conjunction="or">
+                <due-date>notempty</due-date>
+                <due-hour>notempty</due-hour>
+                <no-requests>notempty</no-requests>
+            </additionalFields>
+        </lendable>
+        <itemlost>
+            <mapField>getLoanState</mapField>
+            <mapValues>missing##removed##vermisst</mapValues>
+        </itemlost>
+        <lookOnSite>
+            <mapField>loan-status</mapField>
+            <mapValues/>
+        </lookOnSite>
+    </institution>
+
+
+
+</codedefinitions>
