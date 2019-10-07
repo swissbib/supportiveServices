@@ -80,17 +80,23 @@ public class AlmaLibrarySystem extends LibrarySystem implements XMLStreamConstan
                     responseJson = getJsonResponse(url);
                     AlmaItemsResponse almaItemsResponse = mapper.readValue(responseJson, AlmaItemsResponse.class);
                     if (almaItemsResponse.getItem() != null) {
-                        int bestState = 1;
+                        int bestApiState = 0;
+                        CirculationStateItem csItem = new CirculationStateItem();
                         for (AlmaItem item : almaItemsResponse.getItem()) {
-                            CirculationStateItem csItem = new CirculationStateItem();
                             String mmsId = item.getBib_data().getMms_id();
                             int state = Integer.parseInt(item.getItem_data().getBase_status().getValue());
-                            if (state < bestState) bestState = state;
-                            csItem.setSublibrary("NB001"); // this sets SNL fix. use a konkordanztabelle when other holdings have to be respected
-                            csItem.setSubLibraryAvailability("NB001", new Integer(bestState));
-                            csItem.setCirculationState(String.valueOf(bestState));
-                            returnValue.setItemList(csItem);
+                            if (state == 0) {
+                                state = this.AVAILABILITY_STATE_RED;
+                            } else if (state == 1) {
+                                state = this.AVAILABILITY_STATE_GREEN;
+                            }
+                            if (state > bestApiState) bestApiState = state;
                         }
+                        // write item with best availability to returnValue:
+                        //csItem.setSublibrary("NB001"); // this sets SNL fix. use a konkordanztabelle when other holdings have to be respected
+                        csItem.setSubLibraryAvailability("NB001", new Integer(bestApiState));
+                        //csItem.setCirculationState(String.valueOf(bestApiState));
+                        returnValue.setItemList(csItem);
                     }
                 }
             }
@@ -100,7 +106,6 @@ public class AlmaLibrarySystem extends LibrarySystem implements XMLStreamConstan
         } catch (Exception ex) {
             availLog.warn(ex.getMessage() + "\\r\\n" + ex);
         }
-        // 3. find best availability of all items
 
         return returnValue;
     }
