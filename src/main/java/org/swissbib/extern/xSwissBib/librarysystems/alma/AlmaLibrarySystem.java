@@ -1,41 +1,21 @@
 package org.swissbib.extern.xSwissBib.librarysystems.alma;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.swissbib.extern.xSwissBib.librarysystems.LibrarySystem;
 import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateItem;
 import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateResponse;
-import org.swissbib.extern.xSwissBib.services.circulation.responsemodel.AvailabilityStatus;
 import org.swissbib.extern.xSwissBib.services.common.XServiceException;
 import org.swissbib.extern.xSwissBib.services.common.XServiceUtilities;
-import org.swissbib.utilities.web.HTTPConnectionHandling;
 
-import org.json.simple.JSONObject;
-
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.MalformedURLException;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import org.swissbib.extern.xSwissBib.librarysystems.LibrarySystem;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 /**
@@ -80,17 +60,17 @@ public class AlmaLibrarySystem extends LibrarySystem implements XMLStreamConstan
                     responseJson = getJsonResponse(url);
                     AlmaItemsResponse almaItemsResponse = mapper.readValue(responseJson, AlmaItemsResponse.class);
                     if (almaItemsResponse.getItem() != null) {
-                        int bestApiState = 0;
+                        int bestApiState = this.AVAILABILITY_STATE_UNKNOWN;
                         CirculationStateItem csItem = new CirculationStateItem();
                         for (AlmaItem item : almaItemsResponse.getItem()) {
                             String mmsId = item.getBib_data().getMms_id();
                             int state = Integer.parseInt(item.getItem_data().getBase_status().getValue());
                             if (state == 0) {
-                                state = this.AVAILABILITY_STATE_RED;
+                                bestApiState = this.AVAILABILITY_STATE_RED;
                             } else if (state == 1) {
-                                state = this.AVAILABILITY_STATE_GREEN;
+                                bestApiState = this.AVAILABILITY_STATE_GREEN;
+                                break;
                             }
-                            if (state > bestApiState) bestApiState = state;
                         }
                         // write item with best availability to returnValue:
                         //csItem.setSublibrary("NB001"); // this sets SNL fix. use a konkordanztabelle when other holdings have to be respected
