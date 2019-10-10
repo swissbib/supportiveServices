@@ -17,6 +17,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.json.simple.JSONObject;
+
 
 /**
  * Created by Project SwissBib, www.swissbib.org.
@@ -60,23 +62,33 @@ public class AlmaLibrarySystem extends LibrarySystem implements XMLStreamConstan
                     responseJson = getJsonResponse(url);
                     AlmaItemsResponse almaItemsResponse = mapper.readValue(responseJson, AlmaItemsResponse.class);
                     if (almaItemsResponse.getItem() != null) {
-                        int bestApiState = this.AVAILABILITY_STATE_UNKNOWN;
+                        int bestApiState = AVAILABILITY_STATE_UNKNOWN;
                         CirculationStateItem csItem = new CirculationStateItem();
                         for (AlmaItem item : almaItemsResponse.getItem()) {
-                            String mmsId = item.getBib_data().getMms_id();
                             int state = Integer.parseInt(item.getItem_data().getBase_status().getValue());
-                            if (state == 0) {
-                                bestApiState = this.AVAILABILITY_STATE_RED;
-                            } else if (state == 1) {
-                                bestApiState = this.AVAILABILITY_STATE_GREEN;
-                                break;
+                            if (type == LibrarySystem.AVAILABILITY_REQUEST_BY_LIBRARYCODE) {
+                                if (state == 0) {
+                                    bestApiState = AVAILABILITY_STATE_RED;
+                                } else if (state == 1) {
+                                    bestApiState = AVAILABILITY_STATE_GREEN;
+                                    break;
+                                }
+                            } else if (type == LibrarySystem.AVAILABILITY_REQUEST_BY_BARCODE) {
+                                String barcode = item.getItem_data().getBarcode();
+                                if (!barcode.isEmpty()) {
+                                    String stateTxt = (state == 0) ? "unavailable" : "lendable_available";
+                                    csItem.setIdentifierBarcode(barcode);
+                                    JSONObject json = new JSONObject();
+                                    json.put("statusfield", stateTxt);
+                                    csItem.setItemStatusInfomation(json);
+                                    returnValue.setItemList(csItem);
+                                }
                             }
                         }
-                        // write item with best availability to returnValue:
-                        //csItem.setSublibrary("NB001"); // this sets SNL fix. use a konkordanztabelle when other holdings have to be respected
-                        csItem.setSubLibraryAvailability("NB001", new Integer(bestApiState));
-                        //csItem.setCirculationState(String.valueOf(bestApiState));
-                        returnValue.setItemList(csItem);
+                        if (type == LibrarySystem.AVAILABILITY_REQUEST_BY_LIBRARYCODE) {
+                            csItem.setSubLibraryAvailability("NB001", new Integer(bestApiState)); // this sets SNL fix. use a konkordanztabelle when other holdings have to be respected
+                            returnValue.setItemList(csItem);
+                        }
                     }
                 }
             }
@@ -170,7 +182,10 @@ class AlmaItemBibData {
 class AlmaItemItemData {
     private AlmaItemItemDataBaseStatus base_status;
     public AlmaItemItemDataBaseStatus getBase_status() { return this.base_status; }
-    public void setMms_id(String mms_id) { this.base_status = base_status; }
+    public void setBase_status(AlmaItemItemDataBaseStatus base_status) { this.base_status = base_status; }
+    private String barcode;
+    public String getBarcode() { return this.barcode; }
+    public void setBarcode(String barcode) { this.barcode = barcode; }
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
