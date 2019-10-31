@@ -3,6 +3,7 @@ package org.swissbib.extern.xSwissBib.librarysystems.alma;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
 import org.swissbib.extern.xSwissBib.librarysystems.LibrarySystem;
 import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateItem;
 import org.swissbib.extern.xSwissBib.services.circulation.CirculationStateResponse;
@@ -16,8 +17,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.json.simple.JSONObject;
 
 
 /**
@@ -82,6 +81,7 @@ public class AlmaLibrarySystem extends LibrarySystem implements XMLStreamConstan
                                     json.put("statusfield", stateTxt);
                                     csItem.setItemStatusInfomation(json);
                                     returnValue.setItemList(csItem);
+                                    csItem = new CirculationStateItem();
                                 }
                             }
                         }
