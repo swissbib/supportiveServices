@@ -77,8 +77,14 @@ public class AlmaLibrarySystem extends LibrarySystem implements XMLStreamConstan
                                 if (!barcode.isEmpty()) {
                                     String stateTxt = (state == 0) ? "unavailable" : "lendable_available";
                                     csItem.setIdentifierBarcode(barcode);
+                                    String policyDesc = item.getItem_data().getPolicy().getDesc();
                                     JSONObject json = new JSONObject();
-                                    json.put("statusfield", stateTxt);
+                                    if (policyDesc != null && (policyDesc.equals("Keine Ausleihe") || policyDesc.equals("Lesesaalausleihe"))) {
+                                        json.put("statusfield", "use-on-site");
+                                    }
+                                    else {
+                                        json.put("statusfield", stateTxt);
+                                    }
                                     csItem.setItemStatusInfomation(json);
                                     returnValue.setItemList(csItem);
                                     csItem = new CirculationStateItem();
@@ -180,16 +186,29 @@ class AlmaItemBibData {
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class AlmaItemItemData {
-    private AlmaItemItemDataBaseStatus base_status;
-    public AlmaItemItemDataBaseStatus getBase_status() { return this.base_status; }
-    public void setBase_status(AlmaItemItemDataBaseStatus base_status) { this.base_status = base_status; }
     private String barcode;
     public String getBarcode() { return this.barcode; }
     public void setBarcode(String barcode) { this.barcode = barcode; }
+    private AlmaItemItemDataBaseStatus base_status;
+    public AlmaItemItemDataBaseStatus getBase_status() { return this.base_status; }
+    public void setBase_status(AlmaItemItemDataBaseStatus base_status) { this.base_status = base_status; }
+    private AlmaItemItemDataPolicy policy;
+    public AlmaItemItemDataPolicy getPolicy() { return this.policy; }
+    public void setPolicy(AlmaItemItemDataPolicy policy) { this.policy = policy; }
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class AlmaItemItemDataBaseStatus {
+    private String desc;
+    public String getDesc() { return this.desc; }
+    public void setDesc(String desc) { this.desc = desc; }
+    private String value;
+    public String getValue() { return this.value; }
+    public void setValue(String value) { this.value = value; }
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class AlmaItemItemDataPolicy {
     private String desc;
     public String getDesc() { return this.desc; }
     public void setDesc(String desc) { this.desc = desc; }
